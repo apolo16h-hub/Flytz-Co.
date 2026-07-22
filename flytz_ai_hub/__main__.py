@@ -55,6 +55,12 @@ def cmd_sync(args):
         print(f"  warning: {w}")
 
 
+def cmd_serve(args):
+    from .receiver import serve
+
+    serve(host=args.host, port=args.port)
+
+
 def cmd_summary(args):
     days = args.days
     sleep = db.query("sleep", days)
@@ -101,6 +107,12 @@ def main(argv=None):
     y = sub.add_parser("sync", help="Import a Bevel/Apple Health export")
     y.add_argument("path")
     y.set_defaults(func=cmd_sync)
+
+    r = sub.add_parser("serve", help="Run the auto-sync receiver for Health Auto Export")
+    r.add_argument("--host", default="127.0.0.1",
+                   help="Use your computer's LAN IP so your phone can reach it")
+    r.add_argument("--port", type=int, default=8777)
+    r.set_defaults(func=cmd_serve)
 
     z = sub.add_parser("summary", help="Show a summary of recent data")
     z.add_argument("--days", type=int, default=7)

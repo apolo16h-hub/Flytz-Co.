@@ -53,9 +53,29 @@ python -m flytz_ai_hub log-metric weight 74.2
 # Import a Bevel / Apple Health export
 python -m flytz_ai_hub sync path/to/export.json
 
+# Continuous auto-sync from Apple Watch (see below)
+FLYTZ_API_KEY=pick-a-secret python -m flytz_ai_hub serve --host <your-LAN-IP>
+
 # See a summary of the last 7 days
 python -m flytz_ai_hub summary
 ```
+
+### Continuous sync from Apple Watch
+
+No more manual exports: install the **Health Auto Export** app on your iPhone
+(App Store, ~$5 — it reads Apple Health, which your Apple Watch and Bevel feed into),
+then:
+
+1. On your computer, start the receiver:
+   `FLYTZ_API_KEY=pick-a-secret python -m flytz_ai_hub serve --host <your-LAN-IP> `
+   (find your LAN IP in your computer's Wi-Fi settings, e.g. `192.168.1.20`)
+2. In Health Auto Export, create a new **REST API** automation:
+   - URL: `http://<your-LAN-IP>:8777/ingest`
+   - Add a header `api-key` with the same secret
+   - Select the metrics (Sleep Analysis, Resting Heart Rate, HRV, Steps, Weight...)
+   - Set the schedule (e.g. hourly)
+3. Done — your data lands in the hub automatically whenever your phone is on
+   the same Wi-Fi as your computer.
 
 All data is stored locally in `~/.flytz/health.db` (SQLite). Nothing leaves your machine
 except the conversation with the Claude API.
