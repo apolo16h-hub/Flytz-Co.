@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flytz Co. — Wear the World</title>
+<meta name="description" content="Flytz Co. is a travel-inspired clothing brand. Capsule collections inspired by the world's cities, landmarks and monuments.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23c9a24b' d='M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-theme="dark">
+
+<!-- ════════ NAV ════════ -->
+<header class="nav" id="nav">
+  <a class="nav__logo" href="#top" aria-label="Flytz Co. home">
+    <svg viewBox="0 0 24 24" class="nav__plane" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>
+    <span>FLYTZ&nbsp;CO.</span>
+  </a>
+  <nav class="nav__links" aria-label="Primary">
+    <a href="#collections">Collections</a>
+    <a href="#explorer">Explore</a>
+    <a href="#highlights">Highlights</a>
+    <a href="#story">Story</a>
+  </nav>
+  <div class="nav__actions">
+    <button class="btn btn--ghost btn--sm" id="cartBtn" aria-label="Open cart">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7V6a6 6 0 1 1 12 0v1h3l-1 14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2L3 7h3Zm2 0h8V6a4 4 0 1 0-8 0v1Z"/></svg>
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+    <a href="#explorer" class="btn btn--gold btn--sm">Shop by Destination</a>
+  </div>
+</header>
+
+<!-- ════════ HERO · GLOBE ════════ -->
+<section class="hero" id="top">
+  <canvas id="globe" class="hero__globe" aria-hidden="true"></canvas>
+  <div class="hero__vignette" aria-hidden="true"></div>
+  <div class="hero__content">
+    <p class="hero__eyebrow reveal">Travel-inspired clothing · Est. everywhere</p>
+    <h1 class="hero__title">
+      <span class="reveal">Wear the</span>
+      <span class="reveal hero__title-accent">World</span>
+    </h1>
+    <p class="hero__sub reveal">Capsule collections inspired by the cities, monuments and horizons that move us. Every garment is a destination.</p>
+    <div class="hero__cta reveal">
+      <a href="#explorer" class="btn btn--gold btn--lg">Explore Destinations</a>
+      <a href="#collections" class="btn btn--outline btn--lg">Featured Capsules</a>
+    </div>
+    <div class="hero__ticker" aria-hidden="true">
+      <div class="ticker__track" id="tickerTrack">
+        <span>PARIS · CDG</span><span>TOKYO · HND</span><span>LONDON · LHR</span><span>NEW YORK · JFK</span><span>CAIRO · CAI</span><span>RIO · GIG</span><span>SYDNEY · SYD</span><span>ROME · FCO</span><span>MARRAKECH · RAK</span><span>SEOUL · ICN</span>
+      </div>
+    </div>
+  </div>
+  <div class="hero__scroll" aria-hidden="true"><span></span></div>
+</section>
+
+<!-- ════════ FEATURED COLLECTIONS ════════ -->
+<section class="section" id="collections">
+  <div class="section__head reveal">
+    <p class="section__eyebrow">Now Boarding</p>
+    <h2 class="section__title">Featured Destination Capsules</h2>
+    <p class="section__sub">Three cities. Three stories. Limited runs inspired by the architecture and identity of each place.</p>
+  </div>
+  <div class="cards" id="featuredCards"><!-- filled by JS --></div>
+</section>
+
+<!-- ════════ EXPLORER ════════ -->
+<section class="section section--full" id="explorer">
+  <div class="section__head reveal">
+    <p class="section__eyebrow">Departures Board</p>
+    <h2 class="section__title">Choose Your Destination</h2>
+    <p class="section__sub">Select a region on the map, then a country, to open its capsule collection.</p>
+  </div>
+
+  <div class="explorer">
+    <div class="explorer__map-wrap reveal">
+      <svg id="worldMap" class="explorer__map" viewBox="0 0 1000 520" role="group" aria-label="World map, select a region"></svg>
+      <div class="explorer__regions" id="regionChips" role="tablist" aria-label="Regions"></div>
+      <div class="explorer__countries" id="countryChips" aria-live="polite"></div>
+    </div>
+
+    <!-- Country panel -->
+    <aside class="panel" id="countryPanel" aria-hidden="true" role="dialog" aria-labelledby="panelTitle">
+      <button class="panel__close" id="panelClose" aria-label="Close collection panel">✕</button>
+      <div class="panel__inner">
+        <div class="panel__monument">
+          <div class="monument-stage" id="monumentStage" aria-hidden="true"></div>
+          <div class="panel__meta">
+            <p class="panel__route" id="panelRoute">FLZ → CDG</p>
+            <h3 class="panel__title" id="panelTitle">France</h3>
+            <p class="panel__tagline" id="panelTagline"></p>
+          </div>
+        </div>
+        <div class="panel__products" id="panelProducts" tabindex="0" aria-label="Collection pieces"></div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ════════ HIGHLIGHTS ════════ -->
+<section class="section" id="highlights">
+  <div class="section__head reveal">
+    <p class="section__eyebrow">First Class</p>
+    <h2 class="section__title">Product Highlights</h2>
+  </div>
+  <div class="highlights" id="highlightRow"></div>
+</section>
+
+<!-- ════════ STORY ════════ -->
+<section class="section story" id="story">
+  <div class="story__art reveal" aria-hidden="true">
+    <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="78" fill="none" stroke="currentColor" stroke-width=".7" opacity=".5"/><ellipse cx="100" cy="100" rx="78" ry="28" fill="none" stroke="currentColor" stroke-width=".7" opacity=".35"/><ellipse cx="100" cy="100" rx="28" ry="78" fill="none" stroke="currentColor" stroke-width=".7" opacity=".35"/><path d="M30 60 q70 -40 140 10" fill="none" stroke="var(--gold)" stroke-width="1.2" stroke-dasharray="3 5"/><path d="M168 68 l8 2 -6 5z" fill="var(--gold)"/></svg>
+  </div>
+  <div class="story__text">
+    <p class="section__eyebrow reveal">The Brand</p>
+    <h2 class="section__title reveal">Clothing with a Passport</h2>
+    <p class="reveal">Flytz Co. began with a simple idea: the places we travel change the way we dress, and the way we see. Each capsule is designed around one destination — its monuments, materials, street light and skyline — then cut in limited runs.</p>
+    <p class="reveal">From the iron lattice of Paris to the neon grid of Tokyo, every stitch carries coordinates. Collect the world, one garment at a time.</p>
+    <div class="story__stats reveal">
+      <div><strong>24</strong><span>Destinations</span></div>
+      <div><strong>190+</strong><span>Pieces designed</span></div>
+      <div><strong>6</strong><span>Continents shipped</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ CTA ════════ -->
+<section class="cta reveal">
+  <h2>Your next destination is already in your wardrobe.</h2>
+  <a href="#explorer" class="btn btn--gold btn--lg">Shop by Destination</a>
+</section>
+
+<footer class="footer">
+  <div class="footer__brand">FLYTZ CO.</div>
+  <p>Travel-inspired clothing · Designed for a Shopify storefront concept</p>
+  <p class="footer__fine">© 2026 Flytz Co. — Concept design. All destinations welcome.</p>
+</footer>
+
+<!-- ════════ CART DRAWER ════════ -->
+<aside class="cart" id="cartDrawer" aria-hidden="true" role="dialog" aria-label="Your cabin bag">
+  <div class="cart__head">
+    <h3>Cabin Bag</h3>
+    <button class="panel__close" id="cartClose" aria-label="Close cart">✕</button>
+  </div>
+  <div class="cart__items" id="cartItems"></div>
+  <div class="cart__foot">
+    <div class="cart__total"><span>Total</span><strong id="cartTotal">£0.00</strong></div>
+    <button class="btn btn--gold btn--lg btn--block" id="checkoutBtn">Proceed to Boarding</button>
+  </div>
+</aside>
+
+<!-- ════════ CHECKOUT · BOARDING ════════ -->
+<div class="checkout" id="checkout" aria-hidden="true" role="dialog" aria-label="Checkout">
+  <div class="checkout__sky" aria-hidden="true">
+    <div class="runway"></div>
+    <svg class="jet" id="jet" viewBox="0 0 120 48" aria-hidden="true">
+      <path d="M4 30 L70 30 Q92 30 104 22 L116 14 L112 26 Q104 36 84 38 L10 38 Q2 36 4 30 Z" fill="currentColor"/>
+      <path d="M54 30 L44 10 L52 10 L68 30 Z" fill="currentColor" opacity=".85"/>
+      <path d="M86 32 L82 44 L89 44 L96 33 Z" fill="currentColor" opacity=".85"/>
+      <circle cx="20" cy="40" r="3" fill="#0b0f17"/><circle cx="72" cy="40" r="3" fill="#0b0f17"/>
+    </svg>
+    <div class="clouds"><i></i><i></i><i></i></div>
+  </div>
+
+  <div class="checkout__card" id="checkoutCard">
+    <button class="panel__close" id="checkoutClose" aria-label="Close checkout">✕</button>
+    <ol class="steps" id="steps">
+      <li data-step="0" class="is-active">Check-in</li>
+      <li data-step="1">Security</li>
+      <li data-step="2">Boarding</li>
+    </ol>
+
+    <!-- Step 1: address -->
+    <form class="step is-active" id="step0" autocomplete="off">
+      <h3 class="step__title">Check-in · Delivery details</h3>
+      <p class="step__sub">Where is this flight landing?</p>
+      <div class="field"><label for="fName">Passenger name</label><input id="fName" required placeholder="A. Traveller"></div>
+      <div class="field"><label for="fAddr">Address</label><input id="fAddr" required placeholder="1 Runway Lane"></div>
+      <div class="field-row">
+        <div class="field"><label for="fCity">City</label><input id="fCity" required placeholder="London"></div>
+        <div class="field"><label for="fZip">Postcode</label><input id="fZip" required placeholder="FL1 2TZ"></div>
+      </div>
+      <button class="btn btn--gold btn--block" type="submit">Continue to Security</button>
+    </form>
+
+    <!-- Step 2: payment -->
+    <form class="step" id="step1" autocomplete="off">
+      <h3 class="step__title">Security · Payment</h3>
+      <p class="step__sub">Concept demo — no real payment is taken.</p>
+      <div class="field"><label for="fCard">Card number</label><input id="fCard" required inputmode="numeric" placeholder="4242 4242 4242 4242"></div>
+      <div class="field-row">
+        <div class="field"><label for="fExp">Expiry</label><input id="fExp" required placeholder="12/29"></div>
+        <div class="field"><label for="fCvc">CVC</label><input id="fCvc" required inputmode="numeric" placeholder="123"></div>
+      </div>
+      <button class="btn btn--gold btn--block" type="submit">Begin Boarding</button>
+    </form>
+
+    <!-- Step 3: boarding animation -->
+    <div class="step step--board" id="step2">
+      <h3 class="step__title">Boarding…</h3>
+      <p class="step__sub" id="boardStatus">Loading your capsule onto the aircraft</p>
+      <div class="board-bar"><span id="boardBar"></span></div>
+    </div>
+
+    <!-- Boarding pass receipt -->
+    <div class="step step--pass" id="step3">
+      <div class="pass" id="boardingPass">
+        <div class="pass__main">
+          <div class="pass__row pass__brand"><span>FLYTZ&nbsp;CO. AIRWAYS</span><span>BOARDING PASS</span></div>
+          <div class="pass__route">
+            <div><small>FROM</small><strong>FLZ</strong><span>Flytz Atelier</span></div>
+            <svg viewBox="0 0 24 24" class="pass__plane"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>
+            <div><small>TO</small><strong id="passTo">YOU</strong><span id="passCity">Your city</span></div>
+          </div>
+          <div class="pass__grid">
+            <div><small>PASSENGER</small><span id="passName">A. Traveller</span></div>
+            <div><small>FLIGHT</small><span id="passFlight">FZ 001</span></div>
+            <div><small>GATE</small><span>G7</span></div>
+            <div><small>SEAT</small><span>1A</span></div>
+            <div><small>DATE</small><span id="passDate"></span></div>
+            <div><small>TOTAL PAID</small><span id="passTotal">£0.00</span></div>
+          </div>
+          <div class="pass__items" id="passItems"></div>
+        </div>
+        <div class="pass__stub">
+          <div class="pass__barcode" aria-hidden="true"></div>
+          <small>ORDER <span id="passOrder">FZ-000000</span></small>
+        </div>
+      </div>
+      <button class="btn btn--outline btn--block" id="passDone">Continue exploring</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" hidden></div>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
