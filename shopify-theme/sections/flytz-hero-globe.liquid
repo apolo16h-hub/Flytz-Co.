@@ -1,0 +1,191 @@
+{{ 'flytz-hero.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'flytz-globe.js' | asset_url }}" defer="defer"></script>
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .flytz-hero {
+    min-height: {{ section.settings.height }}vh;
+    min-height: {{ section.settings.height }}svh;
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign link_1 = section.settings.button_link_1 | default: '#flytz-explorer'
+  assign link_2 = section.settings.button_link_2 | default: '#flytz-featured'
+  assign ticker_items = section.settings.ticker | split: ','
+-%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <section class="flytz-hero" data-flytz-drag-area aria-labelledby="FlytzHeroTitle-{{ section.id }}">
+    <flytz-globe
+      class="flytz-hero__globe"
+      data-speed="{{ section.settings.rotation_speed }}"
+      data-plane="{{ section.settings.show_plane }}"
+      data-routes="{{ section.settings.show_routes }}"
+    >
+      <canvas aria-hidden="true"></canvas>
+    </flytz-globe>
+    <div class="flytz-hero__vignette" aria-hidden="true"></div>
+
+    <div class="flytz-hero__content">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="flytz-hero__eyebrow flytz-hero__line" style="--i: 0;">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+      <h1 id="FlytzHeroTitle-{{ section.id }}" class="flytz-hero__title">
+        <span class="flytz-hero__line" style="--i: 1;">{{ section.settings.heading | escape }}</span>
+        {%- if section.settings.heading_accent != blank -%}
+          <span class="flytz-hero__line flytz-hero__accent" style="--i: 2;">{{ section.settings.heading_accent | escape }}</span>
+        {%- endif -%}
+      </h1>
+      {%- if section.settings.subheading != blank -%}
+        <p class="flytz-hero__sub flytz-hero__line" style="--i: 3;">{{ section.settings.subheading | escape }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.button_label_1 != blank or section.settings.button_label_2 != blank -%}
+        <div class="flytz-hero__ctas flytz-hero__line" style="--i: 4;">
+          {%- if section.settings.button_label_1 != blank -%}
+            <a class="button" href="{{ link_1 }}">{{ section.settings.button_label_1 | escape }}</a>
+          {%- endif -%}
+          {%- if section.settings.button_label_2 != blank -%}
+            <a class="button button--secondary" href="{{ link_2 }}">{{ section.settings.button_label_2 | escape }}</a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.ticker != blank -%}
+        <div class="flytz-ticker flytz-hero__line" style="--i: 5;" aria-hidden="true">
+          <div class="flytz-ticker__track">
+            {%- for pass in (1..2) -%}
+              <div class="flytz-ticker__group">
+                {%- for item in ticker_items -%}
+                  <span class="flytz-ticker__item">{{ item | strip | escape }}</span>
+                {%- endfor -%}
+              </div>
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.show_scroll_cue -%}
+      <span class="flytz-hero__scroll" aria-hidden="true"></span>
+    {%- endif -%}
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Flytz globe hero",
+  "tag": "section",
+  "class": "section flytz-section-hero",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Travel-inspired clothing · Est. everywhere"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Wear the"
+    },
+    {
+      "type": "text",
+      "id": "heading_accent",
+      "label": "Heading accent (gold italic line)",
+      "default": "World"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Capsule collections inspired by the cities, monuments and horizons that move us. Every garment is a destination."
+    },
+    {
+      "type": "text",
+      "id": "button_label_1",
+      "label": "First button label",
+      "default": "Explore destinations"
+    },
+    {
+      "type": "url",
+      "id": "button_link_1",
+      "label": "First button link",
+      "info": "Leave empty to scroll to the destination explorer."
+    },
+    {
+      "type": "text",
+      "id": "button_label_2",
+      "label": "Second button label",
+      "default": "Featured capsules"
+    },
+    {
+      "type": "url",
+      "id": "button_link_2",
+      "label": "Second button link",
+      "info": "Leave empty to scroll to featured destinations."
+    },
+    {
+      "type": "textarea",
+      "id": "ticker",
+      "label": "Departures ticker",
+      "info": "Comma-separated, e.g. PARIS · CDG, TOKYO · HND. Leave empty to hide.",
+      "default": "PARIS · CDG, TOKYO · HND, LONDON · LHR, NEW YORK · JFK, CAIRO · CAI, RIO · GIG, SYDNEY · SYD, ROME · FCO, MARRAKECH · RAK, DUBAI · DXB"
+    },
+    {
+      "type": "header",
+      "content": "Globe"
+    },
+    {
+      "type": "range",
+      "id": "rotation_speed",
+      "label": "Rotation speed",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "show_plane",
+      "label": "Show orbiting aircraft",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_routes",
+      "label": "Show flight routes",
+      "info": "Routes connect the first destinations from the destination explorer on the same page.",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "height",
+      "label": "Minimum height",
+      "min": 60,
+      "max": 100,
+      "step": 2,
+      "unit": "vh",
+      "default": 92
+    },
+    {
+      "type": "checkbox",
+      "id": "show_scroll_cue",
+      "label": "Show scroll cue",
+      "default": true
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Flytz globe hero"
+    }
+  ]
+}
+{% endschema %}

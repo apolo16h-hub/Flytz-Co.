@@ -1,0 +1,58 @@
+{%- comment -%}
+  Pre-checkout boarding sequence. Rendered once from layout/theme.liquid when enabled in
+  Theme settings → Flytz. Driven by assets/flytz-boarding.js.
+{%- endcomment -%}
+<div
+  id="FlytzBoarding"
+  class="flytz-boarding"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="FlytzBoardingTitle"
+  aria-hidden="true"
+  inert
+>
+  <div class="flytz-boarding__sky" aria-hidden="true">
+    <span class="flytz-boarding__cloud"></span>
+    <span class="flytz-boarding__cloud"></span>
+    <span class="flytz-boarding__cloud"></span>
+  </div>
+  <div class="flytz-boarding__runway" aria-hidden="true"></div>
+
+  <svg class="flytz-boarding__jet" viewBox="0 0 160 56" aria-hidden="true" focusable="false">
+    <path d="M14 26 L5 5 L15 5 L37 26 Z" fill="{{ settings.flytz_accent }}"/>
+    <path d="M11 29 L1 32 L7 34 L24 31 Z" fill="currentColor" opacity=".75"/>
+    <path d="M9 26 H126 C140 26 150 29 154 33 C150 37 140 39 126 39 H36 C25 39 16 34 9 26 Z" fill="currentColor"/>
+    <path d="M9 26 H126 C140 26 150 29 154 33 H40 C26 33 15 30 9 26 Z" fill="#ffffff" opacity=".35"/>
+    <path d="M140 29.5 L148 31 L147.5 32.6 L139 32 Z" fill="#0b0f17" opacity=".75"/>
+    <g fill="#0b0f17" opacity=".5">
+      <circle cx="42" cy="30.5" r="1"/><circle cx="48" cy="30.5" r="1"/><circle cx="54" cy="30.5" r="1"/><circle cx="60" cy="30.5" r="1"/>
+      <circle cx="66" cy="30.5" r="1"/><circle cx="72" cy="30.5" r="1"/><circle cx="96" cy="30.5" r="1"/><circle cx="102" cy="30.5" r="1"/>
+      <circle cx="108" cy="30.5" r="1"/><circle cx="114" cy="30.5" r="1"/><circle cx="120" cy="30.5" r="1"/><circle cx="126" cy="30.5" r="1"/>
+    </g>
+    <path d="M70 34 L98 35.5 L76 47 L63 47 Z" fill="currentColor" opacity=".88"/>
+    <rect x="72" y="41" width="20" height="7" rx="3.5" fill="#b9c2d3"/>
+    <rect class="flytz-boarding__hold" x="100" y="36" width="12" height="2.6" rx=".6" fill="{{ settings.flytz_accent }}"/>
+    <path d="M44 39 V45 M118 39 V45" stroke="#7d8698" stroke-width="1.4"/>
+    <circle cx="44" cy="47" r="2.4" fill="#0b0f17"/><circle cx="118" cy="47" r="2.4" fill="#0b0f17"/>
+  </svg>
+
+  <div class="flytz-boarding__bags" aria-hidden="true">
+    <span class="flytz-boarding__bag"></span>
+    <span class="flytz-boarding__bag"></span>
+    <span class="flytz-boarding__bag"></span>
+  </div>
+
+  <div class="flytz-boarding__card">
+    <p class="flytz-eyebrow">{{ 'flytz.boarding.eyebrow' | t: gate: settings.flytz_boarding_gate }}</p>
+    <h2 id="FlytzBoardingTitle" class="flytz-boarding__title">{{ 'flytz.boarding.title' | t }}</h2>
+    <ol class="flytz-boarding__steps">
+      <li data-boarding-step data-message="{{ 'flytz.boarding.message_checkin' | t | escape }}">{{ 'flytz.boarding.step_checkin' | t }}</li>
+      <li data-boarding-step data-message="{{ 'flytz.boarding.message_security' | t | escape }}">{{ 'flytz.boarding.step_security' | t }}</li>
+      <li data-boarding-step data-message="{{ 'flytz.boarding.message_boarding' | t: gate: settings.flytz_boarding_gate | escape }}">{{ 'flytz.boarding.step_boarding' | t }}</li>
+      <li data-boarding-step data-message="{{ 'flytz.boarding.message_takeoff' | t | escape }}">{{ 'flytz.boarding.step_takeoff' | t }}</li>
+    </ol>
+    <p class="flytz-boarding__status" data-boarding-status aria-live="polite"></p>
+    <div class="flytz-boarding__bar" aria-hidden="true"><span data-boarding-bar></span></div>
+    <button type="button" class="flytz-boarding__skip" data-boarding-skip>{{ 'flytz.boarding.skip' | t }}</button>
+  </div>
+</div>

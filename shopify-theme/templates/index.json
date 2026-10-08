@@ -1,0 +1,139 @@
+{
+  "sections": {
+    "hero": {
+      "type": "flytz-hero-globe",
+      "settings": {}
+    },
+    "featured_destinations": {
+      "type": "flytz-featured-destinations",
+      "settings": {}
+    },
+    "explorer": {
+      "type": "flytz-destination-explorer",
+      "settings": {
+        "color_scheme": "scheme-5"
+      }
+    },
+    "featured_collection": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "First class picks",
+        "heading_size": "h2",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "collection": "all",
+        "products_to_show": 8,
+        "columns_desktop": 4,
+        "color_scheme": "scheme-1",
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "outline",
+        "enable_desktop_slider": false,
+        "swipe_on_mobile": false,
+        "image_ratio": "portrait",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "standard",
+        "columns_mobile": "2",
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "highlights": {
+      "type": "flytz-highlights",
+      "blocks": {
+        "h1": {
+          "type": "highlight",
+          "settings": {
+            "icon": "star",
+            "title": "Limited capsule runs",
+            "text": "<p>Each destination drop is numbered and never reprinted. When a flight is full, it's full.</p>"
+          }
+        },
+        "h2": {
+          "type": "highlight",
+          "settings": {
+            "icon": "globe",
+            "title": "Shipped worldwide",
+            "text": "<p>Tracked delivery to six continents. Your order travels like you do.</p>"
+          }
+        },
+        "h3": {
+          "type": "highlight",
+          "settings": {
+            "icon": "pin",
+            "title": "Coordinates woven in",
+            "text": "<p>Every piece carries the latitude and longitude of its inspiration, stitched inside the hem.</p>"
+          }
+        },
+        "h4": {
+          "type": "highlight",
+          "settings": {
+            "icon": "leaf",
+            "title": "Responsibly made",
+            "text": "<p>Natural fibres and certified mills, chosen for each destination's craft tradition.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "h1",
+        "h2",
+        "h3",
+        "h4"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1"
+      }
+    },
+    "story": {
+      "type": "flytz-story",
+      "blocks": {
+        "s1": {
+          "type": "stat",
+          "settings": {
+            "value": "24",
+            "label": "Destinations"
+          }
+        },
+        "s2": {
+          "type": "stat",
+          "settings": {
+            "value": "190+",
+            "label": "Pieces designed"
+          }
+        },
+        "s3": {
+          "type": "stat",
+          "settings": {
+            "value": "6",
+            "label": "Continents shipped"
+          }
+        }
+      },
+      "block_order": [
+        "s1",
+        "s2",
+        "s3"
+      ],
+      "settings": {
+        "color_scheme": "scheme-5"
+      }
+    },
+    "cta": {
+      "type": "flytz-cta",
+      "settings": {}
+    }
+  },
+  "order": [
+    "hero",
+    "featured_destinations",
+    "explorer",
+    "featured_collection",
+    "highlights",
+    "story",
+    "cta"
+  ]
+}

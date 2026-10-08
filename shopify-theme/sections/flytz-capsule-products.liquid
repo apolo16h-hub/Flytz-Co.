@@ -1,0 +1,107 @@
+{%- comment -%}
+  Product list for one destination capsule. Not placed in templates: the destination explorer
+  requests it through the Section Rendering API (collection URL + ?section_id=flytz-capsule-products),
+  so prices, currency and availability always match the shopper's market.
+{%- endcomment -%}
+{%- assign limit = 12 -%}
+<div class="flytz-capsule" data-count="{{ collection.products_count }}">
+  {%- if collection.products_count > 0 -%}
+    <p class="flytz-panel__count">
+      {{- 'flytz.explorer.pieces_count' | t: count: collection.products_count -}}
+    </p>
+    {%- for product in collection.products limit: limit -%}
+      {%- liquid
+        assign variant = product.selected_or_first_available_variant
+        assign price_min = product.price_min | money
+      -%}
+      <article class="flytz-capsule__item" style="--i: {{ forloop.index0 }};">
+        <a class="flytz-capsule__media" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+          {%- if product.featured_media -%}
+            {{-
+              product.featured_media
+              | image_url: width: 300
+              | image_tag:
+                loading: 'lazy',
+                widths: '100, 200, 300',
+                sizes: '(min-width: 750px) 96px, 72px',
+                alt: product.featured_media.alt
+            -}}
+          {%- else -%}
+            {{- 'product-apparel-1' | placeholder_svg_tag: 'placeholder-svg' -}}
+          {%- endif -%}
+        </a>
+        <div>
+          <a class="flytz-capsule__title" href="{{ product.url }}">{{ product.title | escape }}</a>
+          {%- if product.type != blank -%}
+            <span class="flytz-capsule__type">{{ product.type | escape }}</span>
+          {%- endif -%}
+        </div>
+        <div class="flytz-capsule__buy">
+          <span class="flytz-capsule__price">
+            {%- if product.compare_at_price > product.price -%}
+              <s>{{ product.compare_at_price | money }}</s>
+            {%- endif -%}
+            {%- if product.price_varies -%}
+              {{ 'products.product.price.from_price_html' | t: price: price_min }}
+            {%- else -%}
+              {{ product.price | money }}
+            {%- endif -%}
+          </span>
+          {%- if product.has_only_default_variant -%}
+            <input type="hidden" name="id" value="{{ variant.id }}">
+          {%- else -%}
+            <select
+              class="flytz-capsule__select"
+              name="id"
+              aria-label="{{ 'flytz.explorer.choose_option' | t: product: product.title | escape }}"
+            >
+              {%- for v in product.variants -%}
+                <option
+                  value="{{ v.id }}"
+                  {% if v.id == variant.id %}
+                    selected
+                  {% endif %}
+                  {% unless v.available %}
+                    disabled
+                  {% endunless %}
+                >
+                  {{- v.title | escape -}}
+                  {%- unless v.available %} · {{ 'products.product.sold_out' | t }}{% endunless -%}
+                </option>
+              {%- endfor -%}
+            </select>
+          {%- endif -%}
+          <button
+            type="button"
+            class="flytz-capsule__add"
+            data-flytz-add
+            {% unless product.available %}
+              disabled
+            {% endunless %}
+          >
+            {%- if product.available -%}
+              {{ 'flytz.explorer.add' | t }}
+            {%- else -%}
+              {{ 'products.product.sold_out' | t }}
+            {%- endif -%}
+          </button>
+        </div>
+      </article>
+    {%- endfor -%}
+    <div class="flytz-capsule__footer">
+      <a class="button button--secondary" href="{{ collection.url }}">
+        {{- 'flytz.explorer.view_all' | t: count: collection.products_count -}}
+      </a>
+    </div>
+  {%- else -%}
+    <p class="flytz-capsule__empty">{{ 'flytz.explorer.empty' | t }}</p>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Flytz capsule products",
+  "tag": "div",
+  "class": "flytz-section-capsule"
+}
+{% endschema %}

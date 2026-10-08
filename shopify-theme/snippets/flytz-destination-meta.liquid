@@ -1,0 +1,57 @@
+{%- comment -%}
+  Resolves the travel metadata for a destination collection and outputs it as one
+  pipe-delimited line: region|airport code|monument|palette|latitude|longitude
+
+  Collection metafields (namespace "flytz") always win: region, airport_code, monument, palette.
+  When they are empty, well-known destinations are recognised from the collection handle
+  (e.g. "france", "paris-capsule", "new-york"), so a new store works with zero setup.
+
+  Usage (render output is captured, then split):
+  {%- capture meta -%}{%- render 'flytz-destination-meta', collection: collection -%}{%- endcapture -%}
+  {%- assign meta = meta | strip | split: '|' -%}
+{%- endcomment -%}
+{%- liquid
+  assign h = collection.handle | downcase
+  assign t = h | split: '-'
+  assign d = 'worldwide||globe|#1a2236||'
+
+  if t contains 'france' or t contains 'paris' or t contains 'french'
+    assign d = 'europe|CDG|eiffel|#1d2435|48.86|2.35'
+  elsif h contains 'united-kingdom' or h contains 'great-britain' or t contains 'uk' or t contains 'london' or t contains 'england' or t contains 'britain'
+    assign d = 'europe|LHR|bigben|#232031|51.51|-0.13'
+  elsif t contains 'italy' or t contains 'italia' or t contains 'rome' or t contains 'roma'
+    assign d = 'europe|FCO|colosseum|#2e2418|41.89|12.49'
+  elsif t contains 'greece' or t contains 'athens'
+    assign d = 'europe|ATH|parthenon|#1a2433|37.97|23.73'
+  elsif t contains 'japan' or t contains 'tokyo' or t contains 'kyoto'
+    assign d = 'asia|HND|fuji|#20152a|35.68|139.69'
+  elsif t contains 'china' or t contains 'beijing' or t contains 'shanghai'
+    assign d = 'asia|PEK|greatwall|#2a1616|39.90|116.40'
+  elsif t contains 'india' or t contains 'agra' or t contains 'delhi' or t contains 'mumbai'
+    assign d = 'asia|DEL|tajmahal|#1c2a2a|28.61|77.21'
+  elsif h contains 'abu-dhabi' or t contains 'uae' or t contains 'dubai' or t contains 'emirates'
+    assign d = 'asia|DXB|burj|#241f14|25.20|55.27'
+  elsif t contains 'egypt' or t contains 'cairo' or t contains 'giza'
+    assign d = 'africa|CAI|pyramids|#2b2213|30.04|31.24'
+  elsif t contains 'morocco' or t contains 'marrakech' or t contains 'marrakesh' or t contains 'casablanca'
+    assign d = 'africa|RAK|koutoubia|#2d1a15|31.63|-7.99'
+  elsif t contains 'brazil' or t contains 'brasil' or t contains 'rio'
+    assign d = 'samerica|GIG|redeemer|#122a24|-22.91|-43.17'
+  elsif t contains 'peru' or t contains 'lima' or t contains 'cusco' or t contains 'machu'
+    assign d = 'samerica|LIM|machu|#2a1f17|-13.16|-72.55'
+  elsif t contains 'mexico' or t contains 'cancun' or t contains 'yucatan'
+    assign d = 'namerica|MEX|chichen|#231526|19.43|-99.13'
+  elsif h contains 'united-states' or h contains 'new-york' or t contains 'usa' or t contains 'nyc'
+    assign d = 'namerica|JFK|liberty|#13251f|40.71|-74.01'
+  elsif t contains 'australia' or t contains 'sydney'
+    assign d = 'oceania|SYD|opera|#102030|-33.87|151.21'
+  endif
+
+  assign p = d | split: '|'
+  assign region = collection.metafields.flytz.region.value | default: p[0] | downcase | strip
+  assign code = collection.metafields.flytz.airport_code.value | default: p[1] | upcase | strip
+  assign monument = collection.metafields.flytz.monument.value | default: p[2] | downcase | strip
+  assign palette = collection.metafields.flytz.palette.value | default: p[3]
+
+  echo region | append: '|' | append: code | append: '|' | append: monument | append: '|' | append: palette | append: '|' | append: p[4] | append: '|' | append: p[5]
+-%}

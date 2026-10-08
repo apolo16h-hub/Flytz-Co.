@@ -1,0 +1,92 @@
+{%- comment -%}
+  Sample destinations shown by Flytz sections until the merchant picks real destination
+  collections. Outputs a JSON array in the same shape the explorer builds from collections,
+  plus inline sample products. Prices are in the shop currency subunit.
+{%- endcomment -%}
+{%- assign all_url = routes.all_products_collection_url -%}
+[
+  {"handle":"france","title":"France","url":{{ all_url | json }},"region":"europe","code":"CDG","monument":"eiffel","palette":"#1d2435","lat":48.86,"lng":2.35,
+   "tagline":"Iron lattice, golden hour. The Paris capsule is cut for café terraces and midnight bridges.",
+   "products":[
+    {"title":"Lattice Overshirt","type":"Overshirt","note":"Eiffel ironwork jacquard","price":{{ 12000 | money | json }}},
+    {"title":"Rive Gauche Trench","type":"Trench","note":"Stone-beige, storm flap","price":{{ 24000 | money | json }}},
+    {"title":"Haussmann Knit","type":"Knit","note":"Balcony-rail cable stitch","price":{{ 9500 | money | json }}},
+    {"title":"Montmartre Tee","type":"Tee","note":"48.8584° N embroidery","price":{{ 4500 | money | json }}},
+    {"title":"Seine Silk Scarf","type":"Accessory","note":"River-map print","price":{{ 6500 | money | json }}}]},
+  {"handle":"united-kingdom","title":"United Kingdom","url":{{ all_url | json }},"region":"europe","code":"LHR","monument":"bigben","palette":"#232031","lat":51.51,"lng":-0.13,
+   "tagline":"Fog, brass and clockwork. The London capsule keeps time in wool and rain-ready shells.",
+   "products":[
+    {"title":"Westminster Mac","type":"Coat","note":"Bonded rain shell","price":{{ 21000 | money | json }}},
+    {"title":"Clocktower Hoodie","type":"Hoodie","note":"Gothic dial back-print","price":{{ 8500 | money | json }}},
+    {"title":"Thames Cargo Pant","type":"Trouser","note":"Bridge-rivet hardware","price":{{ 11000 | money | json }}},
+    {"title":"Double-Decker Tee","type":"Tee","note":"Route 11 graphic","price":{{ 4500 | money | json }}}]},
+  {"handle":"italy","title":"Italy","url":{{ all_url | json }},"region":"europe","code":"FCO","monument":"colosseum","palette":"#2e2418","lat":41.89,"lng":12.49,
+   "tagline":"Arches and amphitheatres. The Rome capsule is tailored like ruins: timeless, sunlit, unshakeable.",
+   "products":[
+    {"title":"Colosseo Blazer","type":"Blazer","note":"Arched seam detail","price":{{ 26000 | money | json }}},
+    {"title":"Travertine Tee","type":"Tee","note":"Stone-wash, SPQR tab","price":{{ 4800 | money | json }}},
+    {"title":"Forum Pleat Trouser","type":"Trouser","note":"Column pleating","price":{{ 13000 | money | json }}}]},
+  {"handle":"japan","title":"Japan","url":{{ all_url | json }},"region":"asia","code":"HND","monument":"fuji","palette":"#20152a","lat":35.68,"lng":139.69,
+   "tagline":"Neon grid below, snow cone above. The Tokyo capsule moves between shrine and skyline.",
+   "products":[
+    {"title":"Fuji Horizon Parka","type":"Parka","note":"Gradient snow-fade hem","price":{{ 23000 | money | json }}},
+    {"title":"Shibuya Crossing Tee","type":"Tee","note":"Crosswalk grid print","price":{{ 4800 | money | json }}},
+    {"title":"Tokyo Tower Coach Jacket","type":"Jacket","note":"Lattice-orange piping","price":{{ 14000 | money | json }}},
+    {"title":"Hakone Haori Shirt","type":"Shirt","note":"Kimono-cut drape","price":{{ 11500 | money | json }}},
+    {"title":"Sakura Tech Tote","type":"Accessory","note":"Blossom ripstop","price":{{ 7000 | money | json }}}]},
+  {"handle":"india","title":"India","url":{{ all_url | json }},"region":"asia","code":"DEL","monument":"tajmahal","palette":"#1c2a2a","lat":28.61,"lng":77.21,
+   "tagline":"Marble symmetry and marigold dusk. The Agra capsule is embroidery-first, light as monsoon air.",
+   "products":[
+    {"title":"Taj Dome Kurta Shirt","type":"Shirt","note":"Inlay embroidery collar","price":{{ 9800 | money | json }}},
+    {"title":"Yamuna Linen Trouser","type":"Trouser","note":"River-wash linen","price":{{ 10500 | money | json }}},
+    {"title":"Marigold Overshirt","type":"Overshirt","note":"Dusk-orange dye","price":{{ 12500 | money | json }}}]},
+  {"handle":"uae","title":"UAE","url":{{ all_url | json }},"region":"asia","code":"DXB","monument":"burj","palette":"#241f14","lat":25.2,"lng":55.27,
+   "tagline":"Vertical gold. The Dubai capsule is engineered like its skyline: sharp, reflective, impossible.",
+   "products":[
+    {"title":"Khalifa Spire Shell","type":"Jacket","note":"Mirror-foil zip tape","price":{{ 19000 | money | json }}},
+    {"title":"Desert Mirage Tee","type":"Tee","note":"Heat-reactive print","price":{{ 5000 | money | json }}},
+    {"title":"Marina Track Pant","type":"Trouser","note":"Skyline side-stripe","price":{{ 9500 | money | json }}}]},
+  {"handle":"egypt","title":"Egypt","url":{{ all_url | json }},"region":"africa","code":"CAI","monument":"pyramids","palette":"#2b2213","lat":30.04,"lng":31.24,
+   "tagline":"Four and a half thousand years of geometry. The Giza capsule is sandstone, linen and gold thread.",
+   "products":[
+    {"title":"Giza Geometry Knit","type":"Knit","note":"Pyramid intarsia","price":{{ 11000 | money | json }}},
+    {"title":"Nile Linen Set","type":"Set","note":"Two-piece, papyrus tone","price":{{ 16000 | money | json }}},
+    {"title":"Sphinx Cap","type":"Accessory","note":"Gold-thread brow","price":{{ 3800 | money | json }}}]},
+  {"handle":"morocco","title":"Morocco","url":{{ all_url | json }},"region":"africa","code":"RAK","monument":"koutoubia","palette":"#2d1a15","lat":31.63,"lng":-7.99,
+   "tagline":"Terracotta walls, mint and zellige. The Marrakech capsule is pattern-drenched and sun-cut.",
+   "products":[
+    {"title":"Medina Mosaic Shirt","type":"Shirt","note":"Zellige tile print","price":{{ 9500 | money | json }}},
+    {"title":"Atlas Djellaba Hoodie","type":"Hoodie","note":"Pointed hood cut","price":{{ 12000 | money | json }}},
+    {"title":"Souk Dye Tee","type":"Tee","note":"Terracotta garment-dye","price":{{ 4500 | money | json }}}]},
+  {"handle":"usa","title":"United States","url":{{ all_url | json }},"region":"namerica","code":"JFK","monument":"liberty","palette":"#13251f","lat":40.71,"lng":-74.01,
+   "tagline":"Torchlight over the harbour. The New York capsule is oxidised copper, denim and midnight transit.",
+   "products":[
+    {"title":"Liberty Patina Jacket","type":"Jacket","note":"Verdigris wash","price":{{ 18000 | money | json }}},
+    {"title":"Subway Map Hoodie","type":"Hoodie","note":"Transit-line embroidery","price":{{ 9000 | money | json }}},
+    {"title":"Hudson Raw Denim","type":"Denim","note":"Selvedge, copper rivets","price":{{ 13500 | money | json }}},
+    {"title":"Five Boroughs Tee","type":"Tee","note":"Borough coordinates","price":{{ 4500 | money | json }}}]},
+  {"handle":"mexico","title":"Mexico","url":{{ all_url | json }},"region":"namerica","code":"MEX","monument":"chichen","palette":"#231526","lat":19.43,"lng":-99.13,
+   "tagline":"Step pyramids and obsidian nights. The Yucatán capsule is carved in bold geometry and colour.",
+   "products":[
+    {"title":"Chichén Step Knit","type":"Knit","note":"Pyramid stair pattern","price":{{ 11500 | money | json }}},
+    {"title":"Cenote Dye Tee","type":"Tee","note":"Deep-water indigo","price":{{ 4600 | money | json }}},
+    {"title":"Obsidian Work Jacket","type":"Jacket","note":"Black-on-black carve stitch","price":{{ 15000 | money | json }}}]},
+  {"handle":"brazil","title":"Brazil","url":{{ all_url | json }},"region":"samerica","code":"GIG","monument":"redeemer","palette":"#122a24","lat":-22.91,"lng":-43.17,
+   "tagline":"Open arms above the bay. The Rio capsule is beach-to-mountain: airy cuts and soapstone neutrals.",
+   "products":[
+    {"title":"Corcovado Overshirt","type":"Overshirt","note":"Soapstone grey","price":{{ 11800 | money | json }}},
+    {"title":"Ipanema Wave Shorts","type":"Shorts","note":"Boardwalk mosaic print","price":{{ 6000 | money | json }}},
+    {"title":"Carioca Tee","type":"Tee","note":"Open-arms silhouette","price":{{ 4400 | money | json }}}]},
+  {"handle":"peru","title":"Peru","url":{{ all_url | json }},"region":"samerica","code":"LIM","monument":"machu","palette":"#2a1f17","lat":-13.16,"lng":-72.55,
+   "tagline":"Cloud citadel. The Andes capsule is alpaca-soft with terrace-stitch textures and thin-air colour.",
+   "products":[
+    {"title":"Machu Terrace Knit","type":"Knit","note":"Alpaca blend, terrace stitch","price":{{ 13000 | money | json }}},
+    {"title":"Inca Trail Fleece","type":"Fleece","note":"Stone-step panels","price":{{ 10500 | money | json }}},
+    {"title":"Cusco Beanie","type":"Accessory","note":"Andean band","price":{{ 3500 | money | json }}}]},
+  {"handle":"australia","title":"Australia","url":{{ all_url | json }},"region":"oceania","code":"SYD","monument":"opera","palette":"#102030","lat":-33.87,"lng":151.21,
+   "tagline":"Sails on the harbour. The Sydney capsule is white-shell minimalism in saltwater performance fabric.",
+   "products":[
+    {"title":"Opera Sail Windbreaker","type":"Jacket","note":"Shell-white ripstop","price":{{ 14500 | money | json }}},
+    {"title":"Harbour Bridge Tee","type":"Tee","note":"Arch blueprint print","price":{{ 4500 | money | json }}},
+    {"title":"Bondi Swim Short","type":"Shorts","note":"Quick-dry, tide print","price":{{ 5800 | money | json }}}]}
+]

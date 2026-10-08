@@ -1,0 +1,203 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign reveal = ''
+  if settings.animations_reveal_on_scroll
+    assign reveal = ' scroll-trigger animate--slide-in'
+  endif
+  assign demo_cards = 'Japan~HND~fuji~#20152a~Neon grid below, snow cone above. The Tokyo capsule moves between shrine and skyline.~japan|France~CDG~eiffel~#1d2435~Iron lattice, golden hour. The Paris capsule is cut for café terraces and midnight bridges.~france|United States~JFK~liberty~#13251f~Torchlight over the harbour. The New York capsule is oxidised copper, denim and midnight transit.~usa' | split: '|'
+-%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <section id="flytz-featured" class="section-{{ section.id }}-padding" aria-labelledby="FlytzFeaturedTitle-{{ section.id }}">
+    <div class="page-width">
+      <div class="flytz-head{{ reveal }}">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="flytz-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+        {%- endif -%}
+        <h2 id="FlytzFeaturedTitle-{{ section.id }}" class="flytz-title">{{ section.settings.heading | escape }}</h2>
+        {%- if section.settings.subheading != blank -%}
+          <p class="flytz-sub">{{ section.settings.subheading | escape }}</p>
+        {%- endif -%}
+      </div>
+
+      <div class="flytz-dest-grid" style="--flytz-cols: {{ section.settings.columns }};">
+        {%- if section.settings.destinations == blank -%}
+          {%- for card in demo_cards -%}
+            {%- assign c = card | split: '~' -%}
+            <div class="{{ reveal }}" {% if reveal != '' %}data-cascade style="--animation-order: {{ forloop.index }};"{% endif %}>
+              <a
+                class="flytz-dest-card"
+                href="{{ routes.all_products_collection_url }}"
+                {% if section.settings.open_in_explorer %}
+                  data-flytz-open="{{ c[5] }}"
+                {% endif %}
+                style="--dest-tint: {{ c[3] }};"
+              >
+                <div class="flytz-dest-card__art">{%- render 'flytz-monument', monument: c[2] -%}</div>
+                <span class="flytz-dest-card__code">{{ c[1] }}</span>
+                <h3 class="flytz-dest-card__title">{{ c[0] }}</h3>
+                <p class="flytz-dest-card__text">{{ c[4] }}</p>
+                <span class="flytz-link">{{ section.settings.link_label | escape }}</span>
+              </a>
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          {%- for collection in section.settings.destinations -%}
+            {%- capture meta -%}{%- render 'flytz-destination-meta', collection: collection -%}{%- endcapture -%}
+            {%- liquid
+              assign m = meta | strip | split: '|'
+              assign tagline = collection.metafields.flytz.tagline.value | default: collection.description | strip_html | strip_newlines | truncatewords: 22
+            -%}
+            <div class="{{ reveal }}" {% if reveal != '' %}data-cascade style="--animation-order: {{ forloop.index }};"{% endif %}>
+              <a
+                class="flytz-dest-card"
+                href="{{ collection.url }}"
+                {% if section.settings.open_in_explorer %}
+                  data-flytz-open="{{ collection.handle }}"
+                {% endif %}
+                style="--dest-tint: {{ m[3] }};"
+              >
+                {%- if section.settings.card_style == 'image' and collection.featured_image -%}
+                  <div class="flytz-dest-card__image">
+                    {{-
+                      collection.featured_image
+                      | image_url: width: 900
+                      | image_tag:
+                        loading: 'lazy',
+                        widths: '450, 600, 900',
+                        sizes: '(min-width: 990px) 33vw, (min-width: 750px) 50vw, 100vw',
+                        alt: collection.featured_image.alt
+                    -}}
+                  </div>
+                {%- else -%}
+                  <div class="flytz-dest-card__art">{%- render 'flytz-monument', monument: m[2] -%}</div>
+                {%- endif -%}
+                {%- if m[1] != blank -%}
+                  <span class="flytz-dest-card__code">{{ m[1] }}</span>
+                {%- endif -%}
+                <h3 class="flytz-dest-card__title">{{ collection.title | escape }}</h3>
+                {%- if tagline != blank -%}
+                  <p class="flytz-dest-card__text">{{ tagline | escape }}</p>
+                {%- endif -%}
+                <span class="flytz-link">{{ section.settings.link_label | escape }}</span>
+              </a>
+            </div>
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Flytz destination cards",
+  "tag": "div",
+  "class": "section flytz-section-featured",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Now boarding"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Featured destination capsules"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Three cities. Three stories. Limited runs inspired by the architecture and identity of each place."
+    },
+    {
+      "type": "collection_list",
+      "id": "destinations",
+      "label": "Destinations",
+      "limit": 6
+    },
+    {
+      "type": "select",
+      "id": "card_style",
+      "label": "Card artwork",
+      "options": [
+        { "value": "monument", "label": "Landmark line art" },
+        { "value": "image", "label": "Collection image" }
+      ],
+      "default": "monument",
+      "info": "Collection image falls back to the landmark when a collection has no image."
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_explorer",
+      "label": "Open the capsule panel when the destination explorer is on the page",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Card link label",
+      "default": "View capsule"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Columns on desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    }
+  ],
+  "presets": [
+    {
+      "name": "Flytz destination cards"
+    }
+  ]
+}
+{% endschema %}

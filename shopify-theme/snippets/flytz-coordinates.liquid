@@ -1,0 +1,19 @@
+{%- comment -%}
+  Formats decimal coordinates as "48.86° N, 2.35° E".
+  Accepts: lat {String|Number}, lng {String|Number}
+{%- endcomment -%}
+{%- liquid
+  assign la = lat | plus: 0
+  assign lo = lng | plus: 0
+  assign ns = 'N'
+  assign ew = 'E'
+  if la < 0
+    assign ns = 'S'
+  endif
+  if lo < 0
+    assign ew = 'W'
+  endif
+  assign la = la | abs | round: 2
+  assign lo = lo | abs | round: 2
+  echo la | append: '° ' | append: ns | append: ', ' | append: lo | append: '° ' | append: ew
+-%}

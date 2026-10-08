@@ -1,0 +1,99 @@
+# Flytz metafield definitions — run once per store (Admin GraphQL API).
+# Creates the "flytz" fields the theme reads. Region and monument become dropdowns in the admin.
+# All of these are optional: the theme recognises well-known destinations from collection handles.
+
+mutation FlytzMetafieldDefinitions {
+  region: metafieldDefinitionCreate(definition: {
+    name: "Destination region"
+    namespace: "flytz"
+    key: "region"
+    ownerType: COLLECTION
+    type: "single_line_text_field"
+    description: "Which continent tab this destination appears under in the destination explorer."
+    pin: true
+    validations: [{ name: "choices", value: "[\"europe\",\"asia\",\"africa\",\"namerica\",\"samerica\",\"oceania\"]" }]
+  }) {
+    createdDefinition { id namespace key }
+    userErrors { field message code }
+  }
+
+  airportCode: metafieldDefinitionCreate(definition: {
+    name: "Airport code"
+    namespace: "flytz"
+    key: "airport_code"
+    ownerType: COLLECTION
+    type: "single_line_text_field"
+    description: "Three-letter code shown on routes, cards and boarding details, e.g. CDG."
+    pin: true
+    validations: [{ name: "max", value: "4" }]
+  }) {
+    createdDefinition { id namespace key }
+    userErrors { field message code }
+  }
+
+  monument: metafieldDefinitionCreate(definition: {
+    name: "Landmark"
+    namespace: "flytz"
+    key: "monument"
+    ownerType: COLLECTION
+    type: "single_line_text_field"
+    description: "Landmark line art shown for this destination."
+    pin: true
+    validations: [{ name: "choices", value: "[\"eiffel\",\"bigben\",\"colosseum\",\"parthenon\",\"fuji\",\"greatwall\",\"tajmahal\",\"burj\",\"pyramids\",\"koutoubia\",\"liberty\",\"chichen\",\"redeemer\",\"machu\",\"opera\",\"globe\"]" }]
+  }) {
+    createdDefinition { id namespace key }
+    userErrors { field message code }
+  }
+
+  palette: metafieldDefinitionCreate(definition: {
+    name: "Destination tint"
+    namespace: "flytz"
+    key: "palette"
+    ownerType: COLLECTION
+    type: "color"
+    description: "Dark background tint behind this destination's landmark."
+    pin: true
+  }) {
+    createdDefinition { id namespace key }
+    userErrors { field message code }
+  }
+
+  tagline: metafieldDefinitionCreate(definition: {
+    name: "Destination tagline"
+    namespace: "flytz"
+    key: "tagline"
+    ownerType: COLLECTION
+    type: "multi_line_text_field"
+    description: "One or two sentences shown on cards, the capsule panel and the collection banner."
+    pin: true
+  }) {
+    createdDefinition { id namespace key }
+    userErrors { field message code }
+  }
+
+  inspiration: metafieldDefinitionCreate(definition: {
+    name: "Inspiration"
+    namespace: "flytz"
+    key: "inspiration"
+    ownerType: PRODUCT
+    type: "single_line_text_field"
+    description: "What this garment borrows from its destination, e.g. Eiffel ironwork jacquard."
+    pin: true
+  }) {
+    createdDefinition { id namespace key }
+    userErrors { field message code }
+  }
+
+  coordinates: metafieldDefinitionCreate(definition: {
+    name: "Coordinates"
+    namespace: "flytz"
+    key: "coordinates"
+    ownerType: PRODUCT
+    type: "single_line_text_field"
+    description: "Coordinates stitched into the garment, e.g. 48.8584° N, 2.2945° E."
+    pin: true
+  }) {
+    createdDefinition { id namespace key }
+    userErrors { field message code }
+  }
+}

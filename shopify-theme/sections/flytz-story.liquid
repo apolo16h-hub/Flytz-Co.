@@ -1,0 +1,172 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign reveal = ''
+  if settings.animations_reveal_on_scroll
+    assign reveal = ' scroll-trigger animate--slide-in'
+  endif
+-%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <section id="flytz-story" class="section-{{ section.id }}-padding">
+    <div class="page-width flytz-story">
+      <div class="flytz-story__media{{ reveal }}">
+        {%- if section.settings.image != blank -%}
+          {{-
+            section.settings.image
+            | image_url: width: 1200
+            | image_tag: loading: 'lazy', widths: '600, 900, 1200', sizes: '(min-width: 990px) 45vw, 100vw'
+          -}}
+        {%- else -%}
+          <svg class="flytz-story__orbit" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+            <circle cx="100" cy="100" r="78" fill="none" stroke="currentColor" stroke-width=".7" opacity=".6"/>
+            <ellipse cx="100" cy="100" rx="78" ry="28" fill="none" stroke="currentColor" stroke-width=".7" opacity=".4"/>
+            <ellipse cx="100" cy="100" rx="28" ry="78" fill="none" stroke="currentColor" stroke-width=".7" opacity=".4"/>
+            <path d="M30 60 q70 -40 140 10" fill="none" stroke="var(--flytz-gold)" stroke-width="1.2" stroke-dasharray="3 5"/>
+            <path d="M168 68 l8 2 -6 5z" fill="var(--flytz-gold)"/>
+          </svg>
+        {%- endif -%}
+      </div>
+      <div class="flytz-story__text{{ reveal }}">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="flytz-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+        {%- endif -%}
+        <h2 class="flytz-title">{{ section.settings.heading | escape }}</h2>
+        <div class="rte">{{ section.settings.text }}</div>
+        {%- if section.blocks.size > 0 -%}
+          <dl class="flytz-stats">
+            {%- for block in section.blocks -%}
+              <div {{ block.shopify_attributes }}>
+                <dt class="flytz-stat__label">{{ block.settings.label | escape }}</dt>
+                <dd class="flytz-stat__value">{{ block.settings.value | escape }}</dd>
+              </div>
+            {%- endfor -%}
+          </dl>
+        {%- endif -%}
+        {%- if section.settings.button_label != blank -%}
+          <p class="flytz-story__cta">
+            <a class="button button--secondary" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">
+              {{- section.settings.button_label | escape -}}
+            </a>
+          </p>
+        {%- endif -%}
+      </div>
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Flytz brand story",
+  "tag": "div",
+  "class": "section flytz-section-story",
+  "max_blocks": 4,
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "Leave empty to show the animated orbit artwork."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "The brand"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Clothing with a passport"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Flytz Co. began with a simple idea: the places we travel change the way we dress, and the way we see. Each capsule is designed around one destination — its monuments, materials, street light and skyline — then cut in limited runs.</p><p>From the iron lattice of Paris to the neon grid of Tokyo, every stitch carries coordinates. Collect the world, one garment at a time.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 96
+    }
+  ],
+  "blocks": [
+    {
+      "type": "stat",
+      "name": "Stat",
+      "settings": [
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Value",
+          "default": "24"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Destinations"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Flytz brand story",
+      "blocks": [
+        { "type": "stat", "settings": { "value": "24", "label": "Destinations" } },
+        { "type": "stat", "settings": { "value": "190+", "label": "Pieces designed" } },
+        { "type": "stat", "settings": { "value": "6", "label": "Continents shipped" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

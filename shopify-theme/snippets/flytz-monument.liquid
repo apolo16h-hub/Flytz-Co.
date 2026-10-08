@@ -1,0 +1,163 @@
+{%- comment -%}
+  Renders a line-art landmark for a destination.
+
+  Accepts:
+  - monument: {String} landmark key (eiffel, bigben, colosseum, parthenon, fuji, greatwall,
+    tajmahal, burj, pyramids, koutoubia, liberty, chichen, redeemer, machu, opera). Anything else renders a globe.
+  - class_name: {String} extra classes (optional)
+
+  Usage:
+  {% render 'flytz-monument', monument: 'eiffel' %}
+{%- endcomment -%}
+{%- liquid
+  assign vb = '0 0 200 240'
+  case monument
+    when 'colosseum', 'fuji'
+      assign vb = '0 0 200 230'
+    when 'tajmahal'
+      assign vb = '0 0 200 210'
+    when 'pyramids', 'machu'
+      assign vb = '0 0 200 222'
+    when 'koutoubia', 'liberty'
+      assign vb = '0 0 200 226'
+    when 'chichen', 'greatwall'
+      assign vb = '0 0 200 190'
+    when 'redeemer'
+      assign vb = '0 0 200 220'
+    when 'opera'
+      assign vb = '0 0 200 214'
+    when 'parthenon'
+      assign vb = '0 0 200 200'
+  endcase
+-%}
+<svg
+  class="flytz-monument{% if class_name != blank %} {{ class_name }}{% endif %}"
+  viewBox="{{ vb }}"
+  aria-hidden="true"
+  focusable="false"
+  data-monument="{{ monument | default: 'globe' }}"
+>
+  {%- case monument -%}
+    {%- when 'eiffel' -%}
+      <path d="M100 18 L104 60 L96 60 Z" class="fm-fill"/>
+      <path d="M100 18 L112 110 M100 18 L88 110"/>
+      <path d="M88 110 Q100 100 112 110 M84 128 Q100 114 116 128"/>
+      <path d="M112 110 L138 206 M88 110 L62 206"/>
+      <path d="M62 206 Q100 148 138 206"/>
+      <path d="M70 180 Q100 136 130 180 M78 152 Q100 126 122 152"/>
+      <path d="M94 70 H106 M91 90 H109"/>
+      <path d="M48 206 H152"/>
+      <path d="M30 222 H170" class="fm-faint"/>
+    {%- when 'bigben' -%}
+      <rect x="80" y="70" width="40" height="140" class="fm-fill"/>
+      <path d="M80 70 L100 34 L120 70 M100 34 L100 16 M96 22 L104 22"/>
+      <circle cx="100" cy="96" r="15"/>
+      <path d="M100 96 V86 M100 96 H108"/>
+      <path d="M80 126 H120 M80 146 H120 M80 166 H120 M80 186 H120"/>
+      <path d="M86 126 V210 M114 126 V210"/>
+      <path d="M60 210 H140"/>
+      <path d="M34 224 H166" class="fm-faint"/>
+    {%- when 'colosseum' -%}
+      <ellipse cx="100" cy="190" rx="86" ry="20"/>
+      <path d="M14 190 L22 110 Q100 86 178 110 L186 190" class="fm-fill"/>
+      <path d="M22 140 Q100 116 178 140 M24 166 Q100 144 176 166"/>
+      <path d="M34 118 v18 M54 112 v22 M76 108 v24 M100 106 v26 M124 108 v24 M146 112 v22 M166 118 v18"/>
+      <path d="M30 148 v16 M52 142 v18 M76 139 v20 M100 138 v20 M124 139 v20 M148 142 v18 M170 148 v16" class="fm-soft"/>
+      <path d="M8 214 H192" class="fm-faint"/>
+    {%- when 'parthenon' -%}
+      <path d="M24 70 L100 34 L176 70 Z" class="fm-fill"/>
+      <path d="M20 70 H180 M24 80 H176"/>
+      <path d="M36 80 V158 M58 80 V158 M80 80 V158 M100 80 V158 M120 80 V158 M142 80 V158 M164 80 V158"/>
+      <path d="M44 80 V158 M66 80 V158 M88 80 V158 M108 80 V158 M128 80 V158 M150 80 V158 M172 80 V158" class="fm-faint"/>
+      <path d="M22 158 H178 M14 168 H186 M6 178 H194"/>
+      <path d="M0 192 H200" class="fm-faint"/>
+    {%- when 'fuji' -%}
+      <path d="M100 52 L164 196 H36 Z" class="fm-fill"/>
+      <path d="M78 96 Q88 106 100 96 Q112 106 124 96 L112 70 Q100 78 88 70 Z"/>
+      <path d="M36 196 Q70 186 100 196 Q130 186 164 196" class="fm-soft"/>
+      <circle cx="156" cy="52" r="12" class="fm-soft"/>
+      <path d="M46 150 q10 -8 20 0 M134 150 q10 -8 20 0" class="fm-faint"/>
+      <path d="M20 212 H180" class="fm-faint"/>
+    {%- when 'greatwall' -%}
+      <path d="M0 150 Q40 120 70 128 Q100 136 120 108 Q140 80 200 92" />
+      <path d="M0 166 Q40 136 70 144 Q100 152 120 124 Q140 96 200 108" class="fm-fill"/>
+      <rect x="58" y="104" width="22" height="34" class="fm-fill"/>
+      <path d="M58 104 v-6 h5 v6 m6 0 v-6 h5 v6 m6 0 v-6"/>
+      <rect x="146" y="70" width="22" height="34" class="fm-fill"/>
+      <path d="M146 70 v-6 h5 v6 m6 0 v-6 h5 v6 m6 0 v-6"/>
+      <path d="M10 180 Q60 160 100 170 Q150 182 190 160" class="fm-faint"/>
+    {%- when 'tajmahal' -%}
+      <path d="M100 30 Q128 58 128 86 Q100 74 72 86 Q72 58 100 30 Z" class="fm-fill"/>
+      <path d="M100 30 V16"/>
+      <rect x="56" y="86" width="88" height="80"/>
+      <path d="M100 166 v-44 q-14 -16 -28 0 v44 M100 122 q14 -16 28 0" class="fm-soft"/>
+      <path d="M30 60 v106 M170 60 v106 M30 60 q4 -10 8 0 M162 60 q4 -10 8 0 M38 60 v106 M162 60 v106" class="fm-soft"/>
+      <path d="M14 166 H186"/>
+      <path d="M14 184 H186" class="fm-faint"/>
+    {%- when 'burj' -%}
+      <path d="M100 8 L104 58 L110 110 L116 170 L122 212 H78 L84 170 L90 110 L96 58 Z" class="fm-fill"/>
+      <path d="M100 8 V212"/>
+      <path d="M90 110 h20 M84 170 h32 M96 58 h8"/>
+      <path d="M122 212 L142 212 L134 150 L122 180 M78 212 L58 212 L66 150 L78 180"/>
+      <path d="M40 224 H160" class="fm-faint"/>
+    {%- when 'pyramids' -%}
+      <path d="M118 70 L196 196 H40 Z" class="fm-fill"/>
+      <path d="M118 70 L138 196 M118 70 L92 196" class="fm-faint"/>
+      <path d="M58 120 L108 196 H8 Z" class="fm-soft"/>
+      <circle cx="30" cy="56" r="13" class="fm-soft"/>
+      <path d="M0 206 H200" class="fm-faint"/>
+    {%- when 'koutoubia' -%}
+      <rect x="76" y="60" width="48" height="140" class="fm-fill"/>
+      <path d="M76 60 H124 M84 60 L84 44 H116 L116 60 M100 44 V26 M96 32 h8"/>
+      <circle cx="100" cy="20" r="4"/>
+      <path d="M84 92 q16 -14 32 0 M84 130 q16 -14 32 0 M84 168 q16 -14 32 0"/>
+      <path d="M52 200 H148"/>
+      <path d="M30 214 H170" class="fm-faint"/>
+    {%- when 'liberty' -%}
+      <path d="M100 70 L96 150 H112 L106 70" class="fm-fill"/>
+      <circle cx="102" cy="56" r="11"/>
+      <path d="M90 50 L114 50 M93 44 l-3 -8 M100 44 l0 -9 M108 44 l3 -8"/>
+      <path d="M118 36 L124 14 M118 36 L112 44"/>
+      <path d="M86 86 L80 110 M106 84 q14 6 10 22"/>
+      <path d="M84 150 H124 L120 170 H88 Z"/>
+      <path d="M70 170 H138 L132 196 H76 Z" class="fm-soft"/>
+      <path d="M52 196 H156"/>
+      <path d="M34 212 H174" class="fm-faint"/>
+    {%- when 'chichen' -%}
+      <path d="M100 48 H124 V70 H140 V96 H156 V122 H172 V148 H28 V122 H44 V96 H60 V70 H76 V48 Z" class="fm-fill"/>
+      <path d="M92 148 V96 H108 V148"/>
+      <path d="M60 70 H140 M44 96 H156 M28 122 H172" class="fm-soft"/>
+      <path d="M86 48 H114 V32 H86 Z"/>
+      <path d="M10 162 H190" class="fm-faint"/>
+    {%- when 'redeemer' -%}
+      <path d="M100 34 v70 M40 70 h120"/>
+      <path d="M100 34 q-7 10 0 18 q7 -8 0 -18 Z" class="fm-fill"/>
+      <path d="M40 70 q-8 2 -10 8 M160 70 q8 2 10 8 M46 64 q24 -8 54 -8 q30 0 54 8" class="fm-soft"/>
+      <path d="M92 104 L88 150 H112 L108 104"/>
+      <path d="M80 150 H120 L116 168 H84 Z"/>
+      <path d="M30 196 Q66 150 100 186 Q140 140 176 196" class="fm-soft"/>
+      <path d="M14 206 H186" class="fm-faint"/>
+    {%- when 'machu' -%}
+      <path d="M58 196 Q76 60 108 36 Q122 92 140 196" class="fm-fill"/>
+      <path d="M24 196 Q48 120 58 104 M140 128 Q162 150 178 196" class="fm-soft"/>
+      <path d="M60 170 h36 M56 182 h48 M70 150 h28 M78 136 h18" class="fm-soft"/>
+      <path d="M44 196 h120"/>
+      <path d="M60 80 q8 -8 16 0 M96 60 q8 -8 16 0" class="fm-faint"/>
+      <path d="M10 210 H190" class="fm-faint"/>
+    {%- when 'opera' -%}
+      <path d="M30 170 Q60 96 118 96 Q96 130 96 170 Z" class="fm-fill"/>
+      <path d="M70 170 Q104 110 158 108 Q134 136 132 170 Z" class="fm-fill"/>
+      <path d="M118 96 Q140 100 150 92 M158 108 Q176 110 184 102" class="fm-soft"/>
+      <path d="M14 170 H192"/>
+      <path d="M10 186 q30 8 60 0 q30 -8 60 0 q30 8 60 0" class="fm-faint"/>
+      <path d="M10 200 H190" class="fm-faint"/>
+    {%- else -%}
+      <circle cx="100" cy="112" r="78" class="fm-fill"/>
+      <ellipse cx="100" cy="112" rx="78" ry="28" class="fm-soft"/>
+      <ellipse cx="100" cy="112" rx="30" ry="78" class="fm-soft"/>
+      <path d="M22 112 H178 M100 34 V190" class="fm-faint"/>
+      <path d="M26 70 Q100 20 182 84" stroke-dasharray="3 6"/>
+      <path d="M178 80 l8 3 -7 5 z" class="fm-solid"/>
+      <path d="M40 222 H160" class="fm-faint"/>
+  {%- endcase -%}
+</svg>

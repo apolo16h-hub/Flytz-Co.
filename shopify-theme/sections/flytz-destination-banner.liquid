@@ -1,0 +1,92 @@
+{%- liquid
+  capture meta
+    render 'flytz-destination-meta', collection: collection
+  endcapture
+  assign m = meta | strip | split: '|'
+  assign region_key = 'flytz.regions.' | append: m[0]
+  assign tagline = collection.metafields.flytz.tagline.value
+  assign origin = section.settings.origin_code | default: 'FLZ'
+-%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <section class="flytz-banner" style="--dest-tint: {{ m[3] }};">
+    <div class="page-width flytz-banner__inner">
+      <div class="{% if settings.animations_reveal_on_scroll %}scroll-trigger animate--slide-in{% endif %}">
+        <p class="flytz-banner__route">
+          <span>{{ origin | escape }}</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>
+          <span>{{ m[1] | default: collection.handle | upcase | slice: 0, 3 }}</span>
+        </p>
+        <h1 class="flytz-banner__title">{{ collection.title | escape }}</h1>
+        {%- if section.settings.show_description -%}
+          {%- if tagline != blank -%}
+            <p class="flytz-banner__desc">{{ tagline | escape }}</p>
+          {%- elsif collection.description != blank -%}
+            <div class="flytz-banner__desc rte">{{ collection.description }}</div>
+          {%- endif -%}
+        {%- endif -%}
+        <dl class="flytz-banner__meta">
+          {%- if m[0] != 'worldwide' -%}
+            <div>
+              <dt>{{ 'flytz.collection.region' | t }}</dt>
+              <dd><strong>{{ region_key | t }}</strong></dd>
+            </div>
+          {%- endif -%}
+          <div>
+            <dt>{{ 'flytz.collection.capsule' | t }}</dt>
+            <dd><strong>{{ 'flytz.explorer.pieces_count' | t: count: collection.products_count }}</strong></dd>
+          </div>
+          {%- if m[4] != blank -%}
+            <div>
+              <dt>{{ 'flytz.collection.coordinates' | t }}</dt>
+              <dd><strong>{%- render 'flytz-coordinates', lat: m[4], lng: m[5] -%}</strong></dd>
+            </div>
+          {%- endif -%}
+        </dl>
+      </div>
+      <div class="flytz-stage is-drawing" aria-hidden="true">
+        <div class="flytz-stage__tilt">{%- render 'flytz-monument', monument: m[2] -%}</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Flytz destination banner",
+  "tag": "div",
+  "class": "section flytz-section-banner",
+  "enabled_on": {
+    "templates": ["collection"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Shows the collection as a destination capsule: route, landmark, region and coordinates. Set flytz metafields on the collection (region, airport_code, monument, palette, tagline) to control it."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show tagline or description",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "origin_code",
+      "label": "Origin code",
+      "default": "FLZ"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Flytz destination banner"
+    }
+  ]
+}
+{% endschema %}

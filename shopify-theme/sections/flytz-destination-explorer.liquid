@@ -1,0 +1,213 @@
+{{ 'flytz-explorer.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'flytz-explorer.js' | asset_url }}" defer="defer"></script>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign demo = false
+  if section.settings.destinations == blank
+    assign demo = true
+  endif
+  assign region_ids = 'europe,asia,africa,namerica,samerica,oceania' | split: ','
+  assign monuments = 'eiffel,bigben,colosseum,parthenon,fuji,greatwall,tajmahal,burj,pyramids,koutoubia,liberty,chichen,redeemer,machu,opera,globe' | split: ','
+-%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <section id="flytz-explorer" class="flytz-explorer section-{{ section.id }}-padding" aria-labelledby="FlytzExplorerTitle-{{ section.id }}">
+    <div class="page-width">
+      <div class="flytz-head{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="flytz-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+        {%- endif -%}
+        <h2 id="FlytzExplorerTitle-{{ section.id }}" class="flytz-title">{{ section.settings.heading | escape }}</h2>
+        {%- if section.settings.subheading != blank -%}
+          <p class="flytz-sub">{{ section.settings.subheading | escape }}</p>
+        {%- endif -%}
+      </div>
+
+      <flytz-explorer class="flytz-explorer__frame" data-default-region="{{ section.settings.default_region }}">
+        <script type="application/json" data-flytz-destinations>
+          {
+            "demo": {{ demo }},
+            "regions": [
+              {%- for r in region_ids -%}
+                {%- assign key = 'flytz.regions.' | append: r -%}
+                {"id": {{ r | json }}, "label": {{ key | t | json }}}{% unless forloop.last %},{% endunless %}
+              {%- endfor -%}
+            ],
+            "strings": {
+              "origin": {{ section.settings.origin_code | default: 'FLZ' | json }},
+              "worldwide": {{ 'flytz.regions.worldwide' | t | json }},
+              "loading": {{ 'flytz.explorer.loading' | t | json }},
+              "adding": {{ 'flytz.explorer.adding' | t | json }},
+              "added": {{ 'flytz.explorer.added' | t | json }},
+              "error": {{ 'flytz.explorer.error' | t | json }},
+              "view_collection": {{ 'flytz.explorer.view_collection' | t | json }},
+              "demo_add": {{ 'flytz.explorer.demo_add' | t | json }},
+              "demo_hint": {{ 'flytz.explorer.demo_hint' | t | json }}
+            },
+            "destinations":
+            {%- if demo -%}
+              {%- render 'flytz-demo-destinations' -%}
+            {%- else -%}
+              [
+              {%- for c in section.settings.destinations -%}
+                {%- capture meta -%}{%- render 'flytz-destination-meta', collection: c -%}{%- endcapture -%}
+                {%- liquid
+                  assign m = meta | strip | split: '|'
+                  assign tagline = c.metafields.flytz.tagline.value | default: c.description | strip_html | strip_newlines | truncatewords: 30
+                  assign lat = m[4] | default: 'null'
+                  assign lng = m[5] | default: 'null'
+                -%}
+                {"handle": {{ c.handle | json }}, "title": {{ c.title | json }}, "url": {{ c.url | json }}, "region": {{ m[0] | json }}, "code": {{ m[1] | default: '' | json }}, "monument": {{ m[2] | json }}, "palette": {{ m[3] | json }}, "lat": {{ lat }}, "lng": {{ lng }}, "tagline": {{ tagline | json }}, "count": {{ c.products_count }}}
+                {%- unless forloop.last -%},{%- endunless -%}
+              {%- endfor -%}
+              ]
+            {%- endif -%}
+          }
+        </script>
+
+        <div class="flytz-explorer__map-wrap">
+          {%- render 'flytz-world-map' -%}
+        </div>
+        <div class="flytz-explorer__regions" role="group" aria-label="{{ 'flytz.explorer.regions_label' | t | escape }}"></div>
+        <div class="flytz-explorer__countries" role="group" aria-label="{{ 'flytz.explorer.countries_label' | t | escape }}" aria-live="polite"></div>
+
+        <div class="flytz-panel-overlay" aria-hidden="true"></div>
+        <div
+          class="flytz-panel"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="FlytzPanelTitle-{{ section.id }}"
+          aria-hidden="true"
+          inert
+        >
+          <button type="button" class="flytz-panel__close" aria-label="{{ 'accessibility.close' | t | escape }}">
+            {{- 'icon-close.svg' | inline_asset_content -}}
+          </button>
+          <div class="flytz-panel__inner">
+            <div class="flytz-panel__destination">
+              <div class="flytz-stage" aria-hidden="true"><div class="flytz-stage__tilt"></div></div>
+              <div class="flytz-panel__meta">
+                <p class="flytz-panel__route" data-panel-route></p>
+                <h3 id="FlytzPanelTitle-{{ section.id }}" class="flytz-panel__title" data-panel-title></h3>
+                <p class="flytz-panel__tagline" data-panel-tagline></p>
+              </div>
+            </div>
+            <div
+              class="flytz-panel__products"
+              data-panel-products
+              tabindex="0"
+              aria-label="{{ 'flytz.explorer.pieces_label' | t | escape }}"
+            ></div>
+          </div>
+        </div>
+
+        {%- for m in monuments -%}
+          <template data-monument="{{ m }}">{%- render 'flytz-monument', monument: m -%}</template>
+        {%- endfor -%}
+      </flytz-explorer>
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Flytz map explorer",
+  "tag": "div",
+  "class": "section flytz-section-explorer",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Departures board"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Choose your destination"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Select a region on the map, then a country, to open its capsule collection."
+    },
+    {
+      "type": "collection_list",
+      "id": "destinations",
+      "label": "Destination collections",
+      "limit": 50,
+      "info": "One collection per country or city. Region, airport code and landmark are read from the collection's flytz metafields, or recognised automatically from handles such as france, japan or new-york. Sample destinations show until you pick collections."
+    },
+    {
+      "type": "select",
+      "id": "default_region",
+      "label": "Region selected on load",
+      "options": [
+        { "value": "europe", "label": "Europe" },
+        { "value": "asia", "label": "Asia" },
+        { "value": "africa", "label": "Africa" },
+        { "value": "namerica", "label": "North America" },
+        { "value": "samerica", "label": "South America" },
+        { "value": "oceania", "label": "Oceania" }
+      ],
+      "default": "europe"
+    },
+    {
+      "type": "text",
+      "id": "origin_code",
+      "label": "Origin code on flight routes",
+      "default": "FLZ"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 96
+    }
+  ],
+  "presets": [
+    {
+      "name": "Flytz map explorer"
+    }
+  ]
+}
+{% endschema %}

@@ -4,6 +4,8 @@ A premium, animated ecommerce concept for **Flytz Co.**, a clothing brand whose 
 collections are inspired by countries, cities, landmarks and monuments around the world.
 Dark luxury-travel aesthetic, gold accents, Cormorant + Montserrat typography.
 
+> The installable Shopify theme built from this concept lives in `shopify-theme/`. See **SHOPIFY-THEME.md** for install and setup.
+
 **Zero dependencies** — plain HTML/CSS/JS (`index.html`, `css/`, `js/`). Run locally:
 
 ```bash
