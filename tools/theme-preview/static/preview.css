@@ -1,0 +1,616 @@
+/* Preview-only chrome for the hosted Flytz theme preview: stands in for Dawn's header, footer,
+   cart drawer, product grid and product page. The Flytz sections themselves are the real theme files. */
+:root {
+  color-scheme: dark;
+  --pv-bg: #0b0f17;
+  --pv-raised: #131a2a;
+  --pv-ink: #eef1f7;
+  --pv-dim: #9aa5b8;
+  --pv-line: rgba(238, 241, 247, 0.1);
+}
+html {
+  scroll-padding-top: 9rem;
+}
+body {
+  background: var(--pv-bg);
+  color: var(--pv-ink);
+}
+img {
+  max-width: 100%;
+}
+[hidden] {
+  display: none !important;
+}
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+label:focus-within {
+  outline: 2px solid var(--flytz-gold);
+  outline-offset: 2px;
+}
+
+/* ---------- header ---------- */
+.pv-announce {
+  padding: 1rem 1.6rem;
+  text-align: center;
+  background: #070a12;
+  border-bottom: 1px solid var(--pv-line);
+}
+.pv-header {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 50;
+  background: rgba(11, 15, 23, 0.86);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--pv-line);
+}
+.pv-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  min-height: 7rem;
+}
+.pv-header__nav {
+  display: flex;
+  gap: 3rem;
+}
+.pv-header__nav a,
+.pv-header__logo {
+  text-decoration: none;
+}
+.pv-bag {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 4.4rem;
+  padding: 0 1.8rem;
+  border: 1px solid rgba(var(--flytz-gold-rgb), 0.6);
+  border-radius: 99px;
+  background: transparent;
+  color: var(--flytz-gold-soft);
+  font: inherit;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.pv-bag:hover {
+  background: rgba(var(--flytz-gold-rgb), 0.12);
+}
+.pv-bag__count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 2.2rem;
+  height: 2.2rem;
+  padding: 0 0.6rem;
+  border-radius: 99px;
+  background: var(--flytz-gold);
+  color: var(--flytz-ink-on-gold);
+  font-size: 1.1rem;
+  letter-spacing: 0;
+}
+
+/* ---------- product grid (stands in for Dawn's product cards) ---------- */
+.pv-grid-section {
+  padding-block: 7rem;
+}
+.pv-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pv-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  height: 100%;
+  padding: 1.2rem 1.2rem 1.8rem;
+  border: 1px solid var(--pv-line);
+  border-radius: 1.8rem;
+  background: var(--pv-raised);
+  color: var(--pv-ink);
+  text-decoration: none;
+  transition: transform 0.4s var(--flytz-ease), border-color 0.3s;
+}
+.pv-card:hover {
+  transform: translateY(-0.6rem);
+  border-color: rgba(var(--flytz-gold-rgb), 0.45);
+}
+.pv-card__media {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  border-radius: 1.2rem;
+  aspect-ratio: 4 / 5;
+}
+.pv-card__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s var(--flytz-ease);
+}
+.pv-card:hover .pv-card__media img {
+  transform: scale(1.05);
+}
+.pv-card__badge {
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  padding: 0.4rem 1rem;
+  border-radius: 99px;
+  background: var(--flytz-gold);
+  color: var(--flytz-ink-on-gold);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.pv-card__meta {
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--flytz-gold-soft);
+}
+.pv-card__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.pv-card__price {
+  margin-top: auto;
+  padding-top: 0.6rem;
+  font-size: 1.45rem;
+  color: var(--pv-dim);
+}
+.pv-card__price s {
+  margin-right: 0.6rem;
+  opacity: 0.6;
+}
+
+/* ---------- product page ---------- */
+.pv-product {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 6rem;
+  align-items: start;
+  padding-block: 5rem 3rem;
+}
+.pv-product__media {
+  overflow: hidden;
+  border: 1px solid var(--pv-line);
+  border-radius: 2rem;
+}
+.pv-product__media img {
+  display: block;
+  width: 100%;
+}
+.pv-product__info {
+  position: sticky;
+  top: 10rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+.pv-crumb {
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--flytz-gold-soft);
+  text-decoration: none;
+}
+.pv-product__title {
+  margin: 0;
+  font-family: var(--font-heading-family);
+  font-weight: var(--font-heading-weight);
+  font-size: clamp(3.6rem, 4.6vw, 5.4rem);
+  line-height: 1.05;
+  text-wrap: balance;
+}
+.pv-product__price {
+  margin: 0;
+  font-size: 2rem;
+  color: var(--flytz-gold-soft);
+}
+.pv-product__price s {
+  margin-right: 0.8rem;
+  font-size: 1.6rem;
+  color: var(--pv-dim);
+}
+.pv-sizes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.pv-sizes legend {
+  width: 100%;
+  margin-bottom: 1rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--pv-dim);
+}
+.pv-size {
+  position: relative;
+}
+.pv-size input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.pv-size span {
+  display: inline-grid;
+  place-items: center;
+  min-width: 5.4rem;
+  min-height: 4.4rem;
+  padding: 0 1.6rem;
+  border: 1px solid rgba(238, 241, 247, 0.2);
+  border-radius: 99px;
+  font-size: 1.35rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.pv-size input:checked + span {
+  background: var(--flytz-gold);
+  border-color: var(--flytz-gold);
+  color: var(--flytz-ink-on-gold);
+}
+.pv-size input:disabled + span {
+  opacity: 0.35;
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+.pv-size input:focus-visible + span {
+  outline: 2px solid var(--flytz-gold);
+  outline-offset: 2px;
+}
+.pv-product__desc {
+  margin: 0;
+  color: var(--pv-dim);
+  font-size: 1.5rem;
+  line-height: 1.7;
+}
+.pv-error {
+  margin: 0;
+  color: #ef8f8f;
+  font-size: 1.3rem;
+}
+
+/* ---------- cart drawer (stands in for Dawn's cart drawer) ---------- */
+.pv-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: rgba(5, 8, 14, 0.6);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s, visibility 0s linear 0.35s;
+}
+.pv-drawer-overlay.is-on {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.35s;
+}
+cart-drawer.pv-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  width: min(42rem, 100%);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: var(--pv-raised);
+  border-left: 1px solid var(--pv-line);
+  box-shadow: -2rem 0 6rem rgba(0, 0, 0, 0.5);
+  transform: translateX(105%);
+  visibility: hidden;
+  transition: transform 0.45s var(--flytz-ease), visibility 0s linear 0.45s;
+}
+cart-drawer.pv-drawer.active {
+  transform: none;
+  visibility: visible;
+  transition: transform 0.45s var(--flytz-ease);
+}
+.pv-drawer__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2.2rem 2.4rem;
+  border-bottom: 1px solid var(--pv-line);
+}
+.pv-drawer__head h2 {
+  margin: 0;
+  font-family: var(--font-heading-family);
+  font-weight: var(--font-heading-weight);
+  font-size: 2.8rem;
+}
+.pv-drawer__close {
+  display: grid;
+  place-items: center;
+  width: 4.4rem;
+  height: 4.4rem;
+  border: 1px solid var(--pv-line);
+  border-radius: 99px;
+  background: transparent;
+  color: var(--pv-dim);
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+.pv-drawer__items {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  padding: 2rem 2.4rem;
+}
+.pv-drawer__empty {
+  margin: 4rem 0;
+  text-align: center;
+  color: var(--pv-dim);
+}
+.pv-line {
+  display: grid;
+  grid-template-columns: 6.4rem minmax(0, 1fr) auto;
+  gap: 1.4rem;
+  align-items: center;
+  padding: 1.2rem;
+  border: 1px solid var(--pv-line);
+  border-radius: 1.4rem;
+}
+.pv-line img {
+  display: block;
+  width: 6.4rem;
+  border-radius: 0.8rem;
+}
+.pv-line__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  font-size: 1.25rem;
+  color: var(--pv-dim);
+}
+.pv-line__info a {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--pv-ink);
+  text-decoration: none;
+}
+.pv-line__end {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.6rem;
+  font-size: 1.4rem;
+}
+.pv-line__end button {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 1.15rem;
+  color: var(--pv-dim);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.pv-drawer__foot {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  padding: 2rem 2.4rem 2.6rem;
+  border-top: 1px solid var(--pv-line);
+}
+.pv-drawer__total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.5rem;
+}
+.pv-drawer__total strong {
+  font-size: 2rem;
+  color: var(--flytz-gold-soft);
+}
+.pv-drawer__note {
+  margin: 0;
+  font-size: 1.2rem;
+  color: var(--pv-dim);
+}
+
+/* ---------- checkout stand-in ---------- */
+.pv-checkout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 5rem;
+  padding-block: 6rem;
+}
+.pv-checkout__form {
+  display: grid;
+  gap: 1.6rem;
+}
+.pv-field {
+  display: grid;
+  gap: 0.6rem;
+}
+.pv-field label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--pv-dim);
+}
+.pv-field input {
+  min-height: 4.8rem;
+  padding: 0 1.4rem;
+  border: 1px solid rgba(238, 241, 247, 0.18);
+  border-radius: 1rem;
+  background: rgba(238, 241, 247, 0.04);
+  color: var(--pv-ink);
+  font: inherit;
+  font-size: 1.5rem;
+}
+.pv-field input:focus {
+  outline: none;
+  border-color: var(--flytz-gold);
+  box-shadow: 0 0 0 3px rgba(var(--flytz-gold-rgb), 0.2);
+}
+.pv-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.6rem;
+}
+.pv-summary {
+  align-self: start;
+  padding: 2.4rem;
+  border: 1px solid var(--pv-line);
+  border-radius: 2rem;
+  background: var(--pv-raised);
+}
+.pv-summary h2 {
+  margin: 0 0 1.6rem;
+  font-family: var(--font-heading-family);
+  font-weight: var(--font-heading-weight);
+  font-size: 2.6rem;
+}
+.pv-summary .pv-line {
+  grid-template-columns: 5.2rem minmax(0, 1fr) auto;
+  margin-bottom: 1rem;
+}
+.pv-summary .pv-line img {
+  width: 5.2rem;
+}
+#pvPass:empty {
+  display: block;
+}
+.pv-pass-wrap {
+  padding-block: 2rem 6rem;
+}
+.pv-pass-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.2rem;
+  margin-top: 2rem;
+}
+
+/* ---------- footer ---------- */
+.pv-footer {
+  padding-block: 6rem 4rem;
+  background: #070a12;
+  border-top: 1px solid var(--pv-line);
+}
+.pv-footer__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr) minmax(0, 1fr);
+  gap: 4rem;
+}
+.pv-footer h3 {
+  margin: 0 0 1.4rem;
+  font-family: var(--font-heading-family);
+  font-weight: var(--font-heading-weight);
+  font-size: 2.4rem;
+}
+.pv-footer p,
+.pv-footer li {
+  font-size: 1.4rem;
+  color: var(--pv-dim);
+}
+.pv-footer ul {
+  display: grid;
+  gap: 0.8rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pv-footer a {
+  color: var(--pv-dim);
+  text-decoration: none;
+}
+.pv-footer a:hover {
+  color: var(--flytz-gold-soft);
+}
+.pv-newsletter {
+  display: flex;
+  gap: 0.8rem;
+}
+.pv-newsletter input {
+  flex: 1;
+  min-width: 0;
+  min-height: 4.6rem;
+  padding: 0 1.4rem;
+  border: 1px solid rgba(238, 241, 247, 0.18);
+  border-radius: 99px;
+  background: transparent;
+  color: var(--pv-ink);
+  font: inherit;
+  font-size: 1.4rem;
+}
+.pv-footer__fine {
+  margin-top: 4rem;
+  padding-top: 2.4rem;
+  border-top: 1px solid var(--pv-line);
+  font-size: 1.2rem !important;
+}
+
+@media screen and (max-width: 989px) {
+  .pv-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .pv-product,
+  .pv-checkout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3rem;
+  }
+  .pv-product__info {
+    position: static;
+  }
+  .pv-footer__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media screen and (max-width: 749px) {
+  .pv-header__nav {
+    display: none;
+  }
+  .pv-header__inner {
+    min-height: 6rem;
+  }
+  .pv-grid {
+    gap: 1.2rem;
+  }
+  .pv-card {
+    padding: 0.8rem 0.8rem 1.4rem;
+  }
+  .pv-card__title {
+    font-size: 1.35rem;
+  }
+  .pv-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pv-grid-section {
+    padding-block: 5rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pv-card,
+  .pv-card__media img,
+  cart-drawer.pv-drawer,
+  .pv-drawer-overlay {
+    transition: none;
+  }
+}

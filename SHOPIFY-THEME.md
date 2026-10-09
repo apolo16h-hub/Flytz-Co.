@@ -24,6 +24,13 @@ Also changed from Dawn: dark luxury colour schemes, Cormorant + Montserrat (both
 font library), pill buttons, rounded cards, cart drawer by default, "Your cabin bag" /
 "Proceed to boarding" cart wording.
 
+## Browsable preview
+
+`tools/theme-preview` renders the Flytz sections with sample products into a static site you can
+scroll and click through (cart, boarding sequence and boarding-pass receipt included):
+`cd tools/theme-preview && npm install && npm run build` writes it to `dist/`. Header, footer, cart
+drawer, product grid and product page in that preview are stand-ins for Dawn's own.
+
 ## Install
 
 **Upload:** zip the *contents* of `shopify-theme/` (so `layout/`, `sections/`… are at the zip root):

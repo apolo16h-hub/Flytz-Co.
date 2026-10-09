@@ -13,6 +13,13 @@
     return [((lng + 180) / 360) * MAP.w, ((yTop - miller(clamped)) / (yTop - yBot)) * MAP.h];
   };
   const SVG_NS = 'http://www.w3.org/2000/svg';
+  const setHash = (url) => {
+    try {
+      window.history.replaceState(null, '', url);
+    } catch (e) {
+      /* sandboxed frames may refuse history updates; the panel works without them */
+    }
+  };
   const FOCUSABLE = 'a[href], button:not([disabled]), select:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
   const escapeHtml = (s) =>
@@ -254,7 +261,7 @@
       this.overlay.classList.add('is-on');
       document.documentElement.classList.add('flytz-locked');
       this.panel.querySelector('.flytz-panel__close').focus({ preventScroll: true });
-      if (window.history.replaceState) window.history.replaceState(null, '', `#destination-${handle}`);
+      setHash(`#destination-${handle}`);
     }
 
     close() {
@@ -264,9 +271,7 @@
       this.panel.setAttribute('inert', '');
       this.overlay.classList.remove('is-on');
       document.documentElement.classList.remove('flytz-locked');
-      if (window.history.replaceState && /^#destination-/.test(window.location.hash)) {
-        window.history.replaceState(null, '', window.location.pathname + window.location.search);
-      }
+      if (/^#destination-/.test(window.location.hash)) setHash(window.location.pathname + window.location.search);
       if (this.lastFocus && document.contains(this.lastFocus)) this.lastFocus.focus({ preventScroll: true });
     }
 

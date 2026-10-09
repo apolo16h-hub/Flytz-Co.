@@ -1,0 +1,13 @@
+{
+  "name": "flytz-theme-preview",
+  "private": true,
+  "description": "Builds a static, hostable preview of the Flytz Shopify theme with sample products.",
+  "scripts": {
+    "build": "node build-static.js ../../shopify-theme dist"
+  },
+  "dependencies": {
+    "@fontsource/cormorant": "^5.2.0",
+    "@fontsource/montserrat": "^5.2.0",
+    "liquidjs": "^10.20.0"
+  }
+}
