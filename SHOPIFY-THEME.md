@@ -18,7 +18,7 @@ The original static concept (`index.html`, `css/`, `js/`, described in `STOREFRO
 | Flytz call to action | Home | "Shop by destination" banner |
 | Flytz destination banner | Collection pages | Each country's collection page becomes its capsule: route (FLZ → CDG), landmark, region, coordinates |
 | Flytz destination story | Product pages | "Inspired by Japan" block with landmark, route, inspiration and coordinates |
-| Boarding sequence | Cart → checkout | ~3 s departure animation (bags loaded, taxi, take-off) between the checkout button and Shopify checkout, with a skip button |
+| Boarding sequence | Cart → checkout | 3.7 s departure animation (bags loaded, taxi, take-off) between the checkout button and Shopify checkout, with a skip button |
 
 Also changed from Dawn: dark luxury colour schemes, Cormorant + Montserrat (both from Shopify's
 font library), pill buttons, rounded cards, cart drawer by default, "Your cabin bag" /
@@ -73,7 +73,7 @@ Then Shopify admin → **Online Store → Themes → Add theme → Upload zip fi
 
 - The **address and payment steps run on Shopify's own checkout pages**. Themes can't add
   animation there, so the boarding sequence plays *between* the cart and checkout and narrates
-  those stages. It lasts about 3 seconds, has a skip button and can be switched off. Express
+  those stages. It lasts about 3.7 seconds, has a skip button and can be switched off. Express
   buttons (Shop Pay, Apple Pay…) go straight to checkout.
 - **Checkout itself** can be branded (colours, fonts, logo) in the checkout editor on every plan.
   Shopify Plus can add more through checkout extensions.

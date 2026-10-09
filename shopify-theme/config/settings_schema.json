@@ -130,7 +130,7 @@
         "id": "flytz_boarding_enable",
         "label": "Play boarding animation before checkout",
         "default": true,
-        "info": "Runs for about three seconds when a shopper presses the checkout button, with a skip option. Express checkout buttons such as Shop Pay go straight to checkout."
+        "info": "Runs for about four seconds when a shopper presses the checkout button, with a skip option. Express checkout buttons such as Shop Pay go straight to checkout."
       },
       {
         "type": "text",
