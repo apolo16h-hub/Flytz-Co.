@@ -1,0 +1,196 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign reveal = ''
+  if settings.animations_reveal_on_scroll
+    assign reveal = ' scroll-trigger animate--slide-in'
+  endif
+  assign demo_rows = 'Paris~CDG~france|London~LHR~united-kingdom|Tokyo~HND~japan|New York~JFK~usa|Dubai~DXB~uae|Marrakech~RAK~morocco|Rio de Janeiro~GIG~brazil|Sydney~SYD~australia' | split: '|'
+  assign status_keys = 'boarding,final_call,gate_open,on_time,new_arrivals,on_time,on_time,gate_open,on_time,on_time' | split: ','
+  assign all_status_keys = 'boarding,final_call,gate_open,on_time,new_arrivals' | split: ','
+  assign gates = 'A4,B12,C7,A9,D2,B3,C11,A1,D8,B6' | split: ','
+-%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <section id="flytz-departures" class="flytz-departures section-{{ section.id }}-padding" aria-labelledby="FlytzDeparturesTitle-{{ section.id }}">
+    <div class="page-width">
+      <div class="flytz-head{{ reveal }}">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="flytz-eyebrow">{{ section.settings.eyebrow | escape }}</p>
+        {%- endif -%}
+        <h2 id="FlytzDeparturesTitle-{{ section.id }}" class="flytz-title">{{ section.settings.heading | escape }}</h2>
+        {%- if section.settings.subheading != blank -%}
+          <p class="flytz-sub">{{ section.settings.subheading | escape }}</p>
+        {%- endif -%}
+      </div>
+
+      <flytz-board
+        class="flytz-board{{ reveal }}"
+        data-statuses="{%- capture statuses -%}{ {%- for key in all_status_keys -%}{%- assign label_key = 'flytz.departures.status_' | append: key -%}{{ key | json }}: {{ label_key | t | upcase | json }}{% unless forloop.last %},{% endunless %}{%- endfor -%} }{%- endcapture -%}{{ statuses | escape }}"
+      >
+        <div class="flytz-board__bar">
+          <span class="flytz-board__label">
+            {{- 'icon-plane.svg' | inline_asset_content -}}
+            {{ 'flytz.departures.board_title' | t }}
+          </span>
+          <span class="flytz-board__origin">{{ section.settings.origin | escape }}</span>
+          <span class="flytz-board__clock" aria-hidden="true">
+            <small>{{ 'flytz.departures.local_time' | t }}</small>
+            <span data-board-clock>--:--</span>
+          </span>
+        </div>
+
+        <div class="flytz-board__table" role="table" aria-label="{{ section.settings.heading | escape }}">
+          <div class="flytz-board__row flytz-board__row--head" role="row">
+            <span class="flytz-board__cell flytz-board__time" role="columnheader">{{ 'flytz.departures.time' | t }}</span>
+            <span class="flytz-board__cell flytz-board__dest" role="columnheader">{{ 'flytz.departures.destination' | t }}</span>
+            <span class="flytz-board__cell flytz-board__flight" role="columnheader">{{ 'flytz.departures.flight' | t }}</span>
+            <span class="flytz-board__cell flytz-board__gate" role="columnheader">{{ 'flytz.departures.gate' | t }}</span>
+            <span class="flytz-board__cell flytz-board__status" role="columnheader">{{ 'flytz.departures.remarks' | t }}</span>
+            <span class="flytz-board__cta" aria-hidden="true"></span>
+          </div>
+
+          {%- liquid
+            if section.settings.destinations == blank
+              assign rows = demo_rows
+            else
+              assign rows = section.settings.destinations
+            endif
+          -%}
+          {%- for row in rows limit: 10 -%}
+            {%- liquid
+              if section.settings.destinations == blank
+                assign parts = row | split: '~'
+                assign dest_name = parts[0]
+                assign dest_code = parts[1]
+                assign dest_handle = parts[2]
+                assign dest_url = routes.all_products_collection_url
+              else
+                capture meta
+                  render 'flytz-destination-meta', collection: row
+                endcapture
+                assign m = meta | strip | split: '|'
+                assign dest_name = row.title
+                assign dest_code = m[1]
+                assign dest_handle = row.handle
+                assign dest_url = row.url
+              endif
+              assign total = forloop.index0 | times: 35 | plus: 495
+              assign hh = total | divided_by: 60 | floor | modulo: 24
+              assign mm = total | modulo: 60
+              assign flight = forloop.index | times: 137 | modulo: 900 | plus: 100
+              assign status_key = status_keys[forloop.index0] | default: 'on_time'
+              assign status_label_key = 'flytz.departures.status_' | append: status_key
+            -%}
+            <div class="flytz-board__row" role="row">
+              <span class="flytz-board__cell flytz-board__time" role="cell" data-flap>
+                {%- if hh < 10 -%}0{%- endif -%}{{ hh }}:{%- if mm < 10 -%}0{%- endif -%}{{ mm -}}
+              </span>
+              <span class="flytz-board__cell flytz-board__dest" role="cell">
+                <a href="{{ dest_url }}" data-flytz-open="{{ dest_handle | escape }}" data-flap>
+                  {{- dest_name | upcase | truncate: 16, '' | escape -}}
+                </a>
+              </span>
+              <span class="flytz-board__cell flytz-board__flight" role="cell" data-flap>FZ{{ flight }}</span>
+              <span class="flytz-board__cell flytz-board__gate" role="cell" data-flap>{{ gates[forloop.index0] }}</span>
+              <span class="flytz-board__cell flytz-board__status" role="cell" data-flap data-status="{{ status_key }}">
+                {{- status_label_key | t | upcase -}}
+              </span>
+              <span class="flytz-board__cta" aria-hidden="true">
+                {%- if dest_code != blank -%}{{ dest_code }} {% endif -%}
+                {{ 'flytz.departures.board' | t }}
+              </span>
+            </div>
+          {%- endfor -%}
+        </div>
+      </flytz-board>
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Flytz departures board",
+  "tag": "div",
+  "class": "section flytz-section-departures",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Live from gate seven"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Departures"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Every capsule is a flight. Pick a departure to open its collection."
+    },
+    {
+      "type": "collection_list",
+      "id": "destinations",
+      "label": "Destination collections",
+      "limit": 10,
+      "info": "One row per collection. Sample departures show until you pick collections."
+    },
+    {
+      "type": "text",
+      "id": "origin",
+      "label": "Departing from",
+      "default": "FLZ · Flytz International"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 96
+    }
+  ],
+  "presets": [
+    {
+      "name": "Flytz departures board"
+    }
+  ]
+}
+{% endschema %}

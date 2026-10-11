@@ -268,7 +268,9 @@ ${capsules ? '<script src="/assets/capsules.js"></script>' : ''}
 <script src="/assets/flytz-motion.js" defer></script>
 <script src="/assets/animations.js" defer></script>`;
 }
+const planeIcon = () => fs.readFileSync(path.join(THEME, 'assets', 'icon-plane.svg'), 'utf8');
 const header = () => `
+<div class="flytz-flight" data-flytz-flight aria-hidden="true"><span class="flytz-flight__line"></span><span class="flytz-flight__plane">${planeIcon()}</span></div>
 <div class="pv-announce"><span class="announcement-bar__message">Now boarding: the Tokyo capsule · Complimentary worldwide shipping</span></div>
 <header class="pv-header">
   <div class="page-width pv-header__inner">

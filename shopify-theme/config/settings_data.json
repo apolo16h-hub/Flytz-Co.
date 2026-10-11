@@ -195,7 +195,8 @@
       "flytz_accent_soft": "#E7CF96",
       "flytz_boarding_enable": true,
       "flytz_boarding_gate": "G7",
-      "flytz_enable_3d": true
+      "flytz_enable_3d": true,
+      "flytz_flight_progress": true
     }
   }
 }

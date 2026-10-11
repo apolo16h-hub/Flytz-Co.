@@ -849,6 +849,286 @@ flytz-landmark.is-ready .flytz-landmark3d {
   margin: 0;
 }
 
+/* ---------- Departures board (split-flap) ---------- */
+.flytz-board {
+  --tile: 1.12em;
+  --tgap: 2px;
+  position: relative;
+  display: block;
+  padding: 2.4rem 2.6rem 1.8rem;
+  border-radius: var(--flytz-radius);
+  border: 1px solid var(--flytz-line);
+  background: linear-gradient(180deg, #0d121d 0%, #090d16 100%);
+  box-shadow: var(--flytz-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+.flytz-board__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 2.4rem;
+  margin-bottom: 1.4rem;
+  padding: 0 1rem 1.6rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+.flytz-board__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #f3dfa6;
+}
+.flytz-board__label .icon {
+  width: 1.8rem;
+  height: 1.8rem;
+  color: var(--flytz-gold);
+}
+:is(.flytz-board__label, .flytz-flight__plane) .icon path {
+  fill: currentColor;
+}
+.flytz-board__origin {
+  font-size: 1.1rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(var(--color-foreground), 0.5);
+}
+.flytz-board__clock {
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+  margin-left: auto;
+  font-size: 2rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+  color: #f3dfa6;
+}
+.flytz-board__clock small {
+  font-size: 1rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(var(--color-foreground), 0.45);
+}
+.flytz-board__row {
+  position: relative;
+  display: grid;
+  grid-template-columns:
+    calc(5 * (var(--tile) + var(--tgap))) minmax(0, 1fr) calc(5 * (var(--tile) + var(--tgap)))
+    calc(3 * (var(--tile) + var(--tgap))) calc(12 * (var(--tile) + var(--tgap))) 8em;
+  align-items: center;
+  gap: 1.6rem;
+  padding: 0.9rem 1rem;
+  border-radius: 1rem;
+  font-size: 1.5rem;
+  transition: background-color 0.25s;
+}
+.flytz-board__row + .flytz-board__row {
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+.flytz-board__row:not(.flytz-board__row--head):hover,
+.flytz-board__row:has(a:focus-visible) {
+  background: rgba(var(--flytz-gold-rgb), 0.07);
+}
+.flytz-board__row:has(a:focus-visible) {
+  outline: 2px solid var(--flytz-gold);
+  outline-offset: 2px;
+}
+.flytz-board__row--head {
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+}
+.flytz-board__row--head .flytz-board__cell {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(var(--color-foreground), 0.45);
+}
+.flytz-board__cell {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  font-weight: 600;
+  color: #f6e7bf;
+}
+.flytz-board__dest a {
+  color: inherit;
+  text-decoration: none;
+  outline: none;
+}
+.flytz-board__dest a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+.flytz-board__cta {
+  justify-self: end;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--flytz-gold);
+  opacity: 0;
+  transform: translateX(-0.6rem);
+  transition: opacity 0.3s, transform 0.3s var(--flytz-ease);
+}
+.flytz-board__cta::after {
+  content: ' →';
+}
+.flytz-board__row--head .flytz-board__cta::after {
+  content: none;
+}
+.flytz-board__row:hover .flytz-board__cta,
+.flytz-board__row:has(a:focus-visible) .flytz-board__cta {
+  opacity: 1;
+  transform: none;
+}
+@media (hover: none) {
+  .flytz-board__cta {
+    opacity: 1;
+    transform: none;
+  }
+}
+.flytz-flaps {
+  display: inline-flex;
+  gap: var(--tgap);
+}
+.flytz-flap {
+  position: relative;
+  display: inline-block;
+  width: var(--tile);
+  padding: 0.3em 0;
+  border-radius: 0.22em;
+  background: linear-gradient(180deg, #1c2333 0 49%, #121825 51% 100%);
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.03);
+  line-height: 1;
+  text-align: center;
+}
+.flytz-flap::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.55);
+}
+.flytz-flap.is-flip {
+  animation: flytzFlap 0.14s ease-out;
+}
+@keyframes flytzFlap {
+  0% { transform: perspective(160px) rotateX(-75deg); filter: brightness(1.6); }
+  100% { transform: none; filter: none; }
+}
+.flytz-board__status[data-status='boarding'] { color: #93f0b4; }
+.flytz-board__status[data-status='final_call'] { color: #ff9b8a; }
+.flytz-board__status[data-status='gate_open'] { color: var(--flytz-gold-soft); }
+.flytz-board__status[data-status='new_arrivals'] { color: var(--flytz-gold); }
+.flytz-board__status[data-status='final_call'] .flytz-flaps {
+  animation: flytzBlink 1.4s steps(2, jump-none) infinite;
+}
+@keyframes flytzBlink {
+  50% { opacity: 0.45; }
+}
+
+/* ---------- Headings rise in word by word (flytz-motion.js) ---------- */
+.flytz-word {
+  display: inline-block;
+  overflow: hidden;
+  padding: 0.08em 0.03em 0.14em;
+  margin: -0.08em -0.03em -0.14em;
+  vertical-align: top;
+}
+.flytz-word > span {
+  display: inline-block;
+  transform: translateY(110%);
+  transition: transform 0.9s var(--flytz-ease);
+  transition-delay: calc(var(--w, 0) * 70ms);
+}
+.is-revealed .flytz-word > span,
+.shopify-design-mode .flytz-word > span {
+  transform: none;
+}
+
+/* ---------- Pointer tilt with glare, magnetic buttons ---------- */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .card-wrapper,
+  .pv-card,
+  [data-flytz-tilt] {
+    transition: transform 0.6s var(--flytz-ease);
+  }
+  .flytz-dest-card.is-tilting {
+    transform: perspective(1200px) translateY(-0.8rem) rotateX(var(--flytz-rx, 0deg)) rotateY(var(--flytz-ry, 0deg));
+    transition: transform 0.18s ease-out, border-color 0.4s;
+  }
+  :is(.card-wrapper, .pv-card, [data-flytz-tilt]).is-tilting {
+    transform: perspective(1200px) rotateX(var(--flytz-rx, 0deg)) rotateY(var(--flytz-ry, 0deg));
+    transition: transform 0.18s ease-out;
+  }
+  .flytz-glare {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    border-radius: inherit;
+    background: radial-gradient(circle at var(--flytz-gx, 50%) var(--flytz-gy, 50%), rgba(255, 238, 205, 0.2), transparent 55%);
+    mix-blend-mode: screen;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s;
+  }
+  .is-tilting .flytz-glare {
+    opacity: 1;
+  }
+  .flytz-hero__ctas .button,
+  .flytz-cta .button,
+  [data-flytz-magnetic] {
+    transition: translate 0.35s var(--flytz-ease), box-shadow var(--duration-short) ease;
+  }
+}
+
+/* ---------- Scroll progress: a flight path along the top of the page ---------- */
+.flytz-flight {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  height: 2px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.flytz-flight.is-airborne {
+  opacity: 1;
+}
+.flytz-flight__line {
+  position: absolute;
+  inset: 0;
+  transform: scaleX(var(--p, 0));
+  transform-origin: left;
+  background: linear-gradient(90deg, rgba(var(--flytz-gold-rgb), 0), var(--flytz-gold) 40%, var(--flytz-gold-soft));
+}
+.flytz-flight__plane {
+  position: absolute;
+  top: -0.7rem;
+  left: calc(var(--p, 0) * 100%);
+  width: 1.6rem;
+  height: 1.6rem;
+  translate: -60% 0;
+  color: var(--flytz-gold-soft);
+  filter: drop-shadow(0 0 0.6rem rgba(var(--flytz-gold-rgb), 0.8));
+}
+.flytz-flight__plane .icon {
+  display: block;
+  width: 100%;
+  height: 100%;
+  rotate: 45deg;
+}
+
 /* ---------- Responsive ---------- */
 @media screen and (max-width: 989px) {
   .flytz-dest-grid {
@@ -897,6 +1177,35 @@ flytz-landmark.is-ready .flytz-landmark3d {
   .flytz-boarding__title {
     font-size: 2.4rem;
   }
+  .flytz-board {
+    padding: 1.6rem 1.2rem 1rem;
+  }
+  .flytz-board__row {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas: 'dest dest' 'time status';
+    gap: 0.6rem 1rem;
+    padding: 1rem 0.6rem;
+    font-size: 1.25rem;
+  }
+  .flytz-board__row--head,
+  .flytz-board__flight,
+  .flytz-board__gate,
+  .flytz-board__cta {
+    display: none;
+  }
+  .flytz-board__dest {
+    grid-area: dest;
+  }
+  .flytz-board__time {
+    grid-area: time;
+  }
+  .flytz-board__status {
+    grid-area: status;
+    justify-self: end;
+  }
+  .flytz-board__clock {
+    margin-left: 0;
+  }
   .flytz-boarding.has-3d {
     padding: 0 1.2rem max(1.2rem, env(safe-area-inset-bottom));
   }
@@ -931,5 +1240,9 @@ flytz-landmark.is-ready .flytz-landmark3d {
   .flytz-stage.is-drawing .flytz-monument :is(path, rect, circle, ellipse) {
     animation: none;
     stroke-dashoffset: 0;
+  }
+  .flytz-flap.is-flip,
+  .flytz-board__status[data-status='final_call'] .flytz-flaps {
+    animation: none;
   }
 }

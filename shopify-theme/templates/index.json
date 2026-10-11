@@ -42,6 +42,12 @@
         "padding_bottom": 64
       }
     },
+    "departures": {
+      "type": "flytz-departures",
+      "settings": {
+        "color_scheme": "scheme-5"
+      }
+    },
     "highlights": {
       "type": "flytz-highlights",
       "blocks": {
@@ -132,6 +138,7 @@
     "featured_destinations",
     "explorer",
     "featured_collection",
+    "departures",
     "highlights",
     "story",
     "cta"

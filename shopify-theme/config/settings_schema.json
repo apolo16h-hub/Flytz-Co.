@@ -148,6 +148,13 @@
         "label": "Use real-time 3D scenes",
         "default": true,
         "info": "WebGL globe, landmark models and boarding scene on devices that support them. Shoppers with data saver on, or on low-memory devices, see the lighter 2D versions."
+      },
+      {
+        "type": "checkbox",
+        "id": "flytz_flight_progress",
+        "label": "Show scroll progress as a flight path",
+        "default": true,
+        "info": "A thin gold line with a small aircraft along the top of the page."
       }
     ]
   },

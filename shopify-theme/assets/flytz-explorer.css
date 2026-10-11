@@ -8,7 +8,67 @@
   box-shadow: var(--flytz-shadow);
 }
 .flytz-explorer__map-wrap {
+  position: relative;
   padding: clamp(1.4rem, 3vw, 3.6rem) clamp(1.4rem, 3vw, 3.6rem) 0.4rem;
+}
+.flytz-explorer__map :is(.flytz-map-region, .flytz-map-grid) {
+  vector-effect: non-scaling-stroke;
+}
+.flytz-explorer__map .flytz-map-label {
+  font-size: calc(13px * var(--map-k, 1));
+  transition: opacity 0.4s;
+}
+.flytz-explorer__map.is-zoomed .flytz-map-label {
+  opacity: 0;
+}
+.flytz-map-pin-g {
+  cursor: pointer;
+}
+.flytz-map-pin-hit {
+  fill: transparent;
+}
+.flytz-map-pin-label {
+  fill: #f3dfa6;
+  font-family: var(--font-body-family);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  paint-order: stroke;
+  stroke: rgba(8, 11, 18, 0.85);
+  stroke-width: calc(3px * var(--map-k, 1));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s 0.3s;
+}
+.flytz-explorer__map.is-zoomed .flytz-map-pin-g.is-in-region .flytz-map-pin-label,
+.flytz-map-pin-g:hover .flytz-map-pin-label {
+  opacity: 1;
+}
+.flytz-map-pin-g:hover .flytz-map-pin {
+  fill: var(--flytz-gold-soft);
+}
+.flytz-explorer__world {
+  position: absolute;
+  top: clamp(1.4rem, 3vw, 3.6rem);
+  left: clamp(1.4rem, 3vw, 3.6rem);
+  padding: 0.7rem 1.4rem;
+  border: 1px solid rgba(var(--flytz-gold-rgb), 0.45);
+  border-radius: 10rem;
+  background: rgba(var(--color-background), 0.7);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  font: inherit;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--flytz-gold-soft);
+  cursor: pointer;
+}
+.flytz-explorer__world::before {
+  content: '← ';
+}
+.flytz-explorer__world:hover {
+  border-color: var(--flytz-gold);
 }
 .flytz-explorer__map {
   display: block;

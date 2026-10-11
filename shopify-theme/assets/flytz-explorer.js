@@ -13,6 +13,7 @@
     return [((lng + 180) / 360) * MAP.w, ((yTop - miller(clamped)) / (yTop - yBot)) * MAP.h];
   };
   const SVG_NS = 'http://www.w3.org/2000/svg';
+  const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   const setHash = (url) => {
     try {
       window.history.replaceState(null, '', url);
@@ -72,7 +73,7 @@
       this.bind();
 
       const first = this.regions.find((r) => r.id === this.dataset.defaultRegion && r.items.length) || this.regions.find((r) => r.items.length);
-      if (first) this.selectRegion(first.id, false);
+      if (first) this.selectRegion(first.id, false, false);
 
       const match = /^#destination-([\w-]+)$/.exec(window.location.hash);
       if (match && this.find(match[1])) {
@@ -113,30 +114,102 @@
 
     renderPins() {
       const g = this.map?.querySelector('.flytz-map-pins');
+      this.pinEls = [];
       if (!g) return;
       g.textContent = '';
+      // Pins are a pointer shortcut; keyboard and screen-reader users have the country chips.
+      g.setAttribute('aria-hidden', 'true');
       this.destinations.forEach((d) => {
         if (typeof d.lat !== 'number' || typeof d.lng !== 'number') return;
         const [x, y] = projectMap(d.lat, d.lng);
+        const pin = document.createElementNS(SVG_NS, 'g');
+        pin.setAttribute('class', 'flytz-map-pin-g');
+        pin.dataset.destination = d.handle;
+        const hit = document.createElementNS(SVG_NS, 'circle');
+        hit.setAttribute('class', 'flytz-map-pin-hit');
+        hit.setAttribute('cx', x.toFixed(1));
+        hit.setAttribute('cy', y.toFixed(1));
         const ring = document.createElementNS(SVG_NS, 'circle');
         ring.setAttribute('class', 'flytz-map-pin-ring');
         ring.setAttribute('cx', x.toFixed(1));
         ring.setAttribute('cy', y.toFixed(1));
-        ring.setAttribute('r', '5');
         ring.style.animationDelay = `${(Math.random() * 2).toFixed(2)}s`;
         const dot = document.createElementNS(SVG_NS, 'circle');
         dot.setAttribute('class', 'flytz-map-pin');
         dot.setAttribute('cx', x.toFixed(1));
         dot.setAttribute('cy', y.toFixed(1));
-        dot.setAttribute('r', '3.2');
-        g.append(ring, dot);
+        const label = document.createElementNS(SVG_NS, 'text');
+        label.setAttribute('class', 'flytz-map-pin-label');
+        label.textContent = d.code || d.title;
+        pin.append(hit, ring, dot, label);
+        g.append(pin);
+        this.pinEls.push({ d, pin, hit, ring, dot, label, x, y });
       });
+      this.view = [0, 0, MAP.w, MAP.h];
+      this.applyView();
     }
 
-    selectRegion(id, focusFirst = true) {
+    /* ---------- map zoom ---------- */
+    applyView() {
+      const [x, y, w, h] = this.view;
+      this.map?.setAttribute('viewBox', `${x.toFixed(1)} ${y.toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)}`);
+      // Pins and labels keep their on-screen size whatever the zoom.
+      const k = w / MAP.w;
+      this.map?.style.setProperty('--map-k', k.toFixed(4));
+      for (const p of this.pinEls || []) {
+        p.dot.setAttribute('r', (3.2 * k).toFixed(2));
+        p.ring.setAttribute('r', (5 * k).toFixed(2));
+        p.hit.setAttribute('r', (11 * k).toFixed(2));
+        p.label.setAttribute('x', (p.x + 7 * k).toFixed(2));
+        p.label.setAttribute('y', (p.y + 3.6 * k).toFixed(2));
+        p.label.setAttribute('font-size', (11 * k).toFixed(2));
+      }
+    }
+
+    zoomTo(regionId) {
+      if (!this.map || !this.pinEls) return;
+      const pins = regionId ? this.pinEls.filter((p) => p.d.region === regionId) : [];
+      let target = [0, 0, MAP.w, MAP.h];
+      if (pins.length) {
+        const xs = pins.map((p) => p.x);
+        const ys = pins.map((p) => p.y);
+        const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
+        const cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+        let w = Math.max(Math.max(...xs) - Math.min(...xs), 150) * 1.7;
+        let h = Math.max(Math.max(...ys) - Math.min(...ys), 90) * 1.7;
+        const aspect = MAP.w / MAP.h;
+        if (w / h > aspect) h = w / aspect;
+        else w = h * aspect;
+        w = Math.min(w, MAP.w);
+        h = Math.min(h, MAP.h);
+        target = [Math.min(Math.max(cx - w / 2, 0), MAP.w - w), Math.min(Math.max(cy - h / 2, 0), MAP.h - h), w, h];
+      }
+      const zoomed = target[2] < MAP.w - 1;
+      this.map.classList.toggle('is-zoomed', zoomed);
+      this.pinEls.forEach((p) => p.pin.classList.toggle('is-in-region', !!regionId && p.d.region === regionId));
+      if (this.worldBtn) this.worldBtn.hidden = !zoomed;
+      cancelAnimationFrame(this.zoomRaf);
+      const from = this.view.slice();
+      if (this.reduced) {
+        this.view = target;
+        this.applyView();
+        return;
+      }
+      const start = performance.now();
+      const step = (now) => {
+        const t = easeInOut(Math.min(1, (now - start) / 900));
+        this.view = from.map((v, i) => v + (target[i] - v) * t);
+        this.applyView();
+        if (t < 1) this.zoomRaf = requestAnimationFrame(step);
+      };
+      this.zoomRaf = requestAnimationFrame(step);
+    }
+
+    selectRegion(id, focusFirst = true, zoom = true) {
       const region = this.regions.find((r) => r.id === id);
       if (!region || !region.items.length) return;
       this.activeRegion = id;
+      if (zoom) this.zoomTo(id);
       this.map?.querySelectorAll('.flytz-map-region[data-region]').forEach((p) => p.classList.toggle('is-active', p.dataset.region === id));
       this.regionsEl.querySelectorAll('.flytz-chip').forEach((c) => {
         const on = c.dataset.region === id;
@@ -159,9 +232,25 @@
         if (chip && !chip.disabled) this.selectRegion(chip.dataset.region, false);
       });
       this.map?.addEventListener('click', (e) => {
+        const pin = e.target.closest('.flytz-map-pin-g');
+        if (pin) {
+          this.open(pin.dataset.destination);
+          return;
+        }
         const path = e.target.closest('.flytz-map-region[data-region]');
         if (path && !path.classList.contains('is-empty')) this.selectRegion(path.dataset.region, false);
       });
+      // "World view" zooms the map back out.
+      const wrap = this.querySelector('.flytz-explorer__map-wrap');
+      if (wrap && this.map) {
+        this.worldBtn = document.createElement('button');
+        this.worldBtn.type = 'button';
+        this.worldBtn.className = 'flytz-explorer__world';
+        this.worldBtn.hidden = true;
+        this.worldBtn.textContent = this.strings.world_view || 'World view';
+        this.worldBtn.addEventListener('click', () => this.zoomTo(null));
+        wrap.append(this.worldBtn);
+      }
       this.map?.addEventListener('keydown', (e) => {
         const path = e.target.closest('.flytz-map-region[data-region]');
         if (path && (e.key === 'Enter' || e.key === ' ')) {
@@ -244,7 +333,7 @@
     open(handle, trigger) {
       const d = this.find(handle);
       if (!d) return;
-      if (d.region && d.region !== this.activeRegion) this.selectRegion(d.region, false);
+      if (d.region && d.region !== this.activeRegion) this.selectRegion(d.region, false, false);
       this.countriesEl.querySelectorAll('[data-destination]').forEach((c) => c.classList.toggle('is-active', c.dataset.destination === handle));
       this.lastFocus = trigger || document.activeElement;
       this.current = d;

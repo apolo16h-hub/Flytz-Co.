@@ -560,7 +560,8 @@
       "empty": "This capsule is boarding soon.",
       "choose_option": "Choose an option for {{ product }}",
       "demo_add": "Sample",
-      "demo_hint": "Sample capsule. Choose destination collections in the theme editor to show your products."
+      "demo_hint": "Sample capsule. Choose destination collections in the theme editor to show your products.",
+      "world_view": "World view"
     },
     "collection": {
       "region": "Region",
@@ -589,6 +590,21 @@
     },
     "hero": {
       "open_capsule": "Open the capsule"
+    },
+    "departures": {
+      "board_title": "Departures",
+      "local_time": "Local time",
+      "time": "Time",
+      "destination": "Destination",
+      "flight": "Flight",
+      "gate": "Gate",
+      "remarks": "Remarks",
+      "board": "Board",
+      "status_boarding": "Boarding",
+      "status_final_call": "Final call",
+      "status_gate_open": "Gate open",
+      "status_on_time": "On time",
+      "status_new_arrivals": "New arrivals"
     }
   }
 }

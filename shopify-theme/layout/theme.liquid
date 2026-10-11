@@ -418,6 +418,13 @@
       <script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
 
+    {%- if settings.flytz_flight_progress -%}
+      <div class="flytz-flight" data-flytz-flight aria-hidden="true">
+        <span class="flytz-flight__line"></span>
+        <span class="flytz-flight__plane">{{- 'icon-plane.svg' | inline_asset_content -}}</span>
+      </div>
+    {%- endif -%}
+
     {%- if settings.flytz_boarding_enable -%}
       {%- render 'flytz-boarding-overlay' -%}
       <script src="{{ 'flytz-boarding.js' | asset_url }}" defer="defer"></script>
