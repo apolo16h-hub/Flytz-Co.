@@ -527,12 +527,15 @@ export function createGlobe(host, opts = {}) {
     const labelsOn = intro >= 0.75;
     for (const { o, facing, x, y } of list) {
       let show = labelsOn && facing > 0.22;
-      const w = 46;
-      const lx = x + 10;
+      const w = o.w || 54;
+      // Labels sit to the right of their pin, or to the left near the right edge; never off screen.
+      let lx = x + 10;
+      if (lx + w > W - 6) lx = x - 10 - w;
       const ly = y - 22;
       if (show) {
         const box = [lx, ly, lx + w, ly + 22];
-        if (avoid.some((r) => box[0] < r[2] && box[2] > r[0] && box[1] < r[3] && box[3] > r[1])) show = false;
+        if (lx < 6 || ly < 6 || ly + 22 > H - 6) show = false;
+        if (show && avoid.some((r) => box[0] < r[2] && box[2] > r[0] && box[1] < r[3] && box[3] > r[1])) show = false;
         if (show && placed.some((p) => box[0] < p[2] + 4 && box[2] + 4 > p[0] && box[1] < p[3] + 2 && box[3] + 2 > p[1])) show = false;
         if (show) placed.push(box);
       }
@@ -541,6 +544,7 @@ export function createGlobe(host, opts = {}) {
       if (show) {
         o.label.style.transform = `translate3d(${(lx + offX).toFixed(1)}px, ${(ly + offY).toFixed(1)}px, 0)`;
         o.label.style.opacity = String(clamp((facing - 0.22) * 5, 0, 1));
+        if (!o.w) o.w = o.label.offsetWidth;
       }
     }
   }

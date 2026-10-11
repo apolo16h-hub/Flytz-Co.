@@ -214,6 +214,10 @@ flytz-landmark.is-ready:active {
 flytz-landmark.is-ready .flytz-landmark3d {
   opacity: 1;
 }
+flytz-landmark.is-switching .flytz-landmark3d {
+  opacity: 0;
+  transition: none;
+}
 :is(.flytz-stage, .flytz-dest-card__art) > :is(.flytz-monument, .flytz-stage__tilt) {
   transition: opacity 0.6s var(--flytz-ease);
 }

@@ -254,6 +254,8 @@ const FONT_FILES = [
 const fontFaces = () =>
   FONT_FILES.map(([fam, f, w, st]) => `@font-face{font-family:'${fam}';font-style:${st};font-weight:${w};src:url(/fonts/${f}-latin-${w}-${st}.woff2) format('woff2');font-display:swap}`).join('');
 
+// The hosted preview loads flytz-3d.js with a plain script tag, so it never depends on injecting
+// scripts at runtime inside the viewer's frame. The theme itself loads it lazily (flytz-motion.js).
 function headTags({ capsules = false } = {}) {
   return `<style>${fontFaces()}</style>
 ${styleBlock}
@@ -265,6 +267,7 @@ ${styleBlock}
 ${capsules ? '<script src="/assets/capsules.js"></script>' : ''}
 <script src="/assets/preview-shim.js"></script>
 <script>window.flytzConfig={threeD:true,threeSrc:'/assets/flytz-3d.js'};</script>
+<script src="/assets/flytz-3d.js" defer></script>
 <script src="/assets/flytz-motion.js" defer></script>
 <script src="/assets/animations.js" defer></script>`;
 }

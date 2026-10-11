@@ -32,8 +32,9 @@
   Flytz.load3D = () => {
     if (pending) return pending;
     pending = new Promise((resolve, reject) => {
-      if (window.Flytz3D) return resolve(window.Flytz3D);
       if (!Flytz.can3D()) return reject(new Error('Flytz 3D unavailable'));
+      // Already on the page (for example preloaded with a script tag): use it as is.
+      if (window.Flytz3D) return resolve(window.Flytz3D);
       const script = document.createElement('script');
       script.src = cfg.threeSrc;
       script.async = true;
@@ -50,6 +51,8 @@
      data-mode="card" turns on its own and leans towards the pointer; "stage" and "panel" can be
      dragged. The panel's landmark follows its `monument` attribute and builds up on every change. */
   if (!customElements.get('flytz-landmark')) {
+    // The capsule panel slides in over 0.65 s; its landmark is built just after.
+    const PANEL_SETTLE_MS = 600;
     class FlytzLandmark extends HTMLElement {
       static get observedAttributes() {
         return ['monument'];
@@ -71,8 +74,30 @@
 
       attributeChangedCallback(name, oldValue, value) {
         if (!value || oldValue === value) return;
-        if (this.view) this.view.setMonument(value, { reveal: true });
-        else if (this.isConnected && this.dataset.mode === 'panel' && Flytz.can3D()) this.mount();
+        if (this.dataset.mode !== 'panel') {
+          this.view?.setMonument(value, { reveal: true });
+          return;
+        }
+        if (!this.isConnected || !Flytz.can3D()) return;
+        if (!this.view) {
+          this.mount();
+          return;
+        }
+        // The panel is sliding in: show the line art first, then print the new landmark once it
+        // has arrived, so building the model never competes with the slide.
+        this.classList.add('is-switching');
+        this.host?.classList.remove('has-3d');
+        clearTimeout(this.switchTimer);
+        this.switchTimer = setTimeout(() => {
+          if (!this.view) return;
+          this.view.setMonument(this.getAttribute('monument'), { reveal: true });
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+              this.classList.remove('is-switching');
+              if (this.view) this.host?.classList.add('has-3d');
+            })
+          );
+        }, PANEL_SETTLE_MS);
       }
 
       mount() {
@@ -80,7 +105,9 @@
         this.mounting = true;
         this.io?.disconnect();
         this.io = null;
-        Flytz.load3D()
+        const wait = this.dataset.mode === 'panel' ? new Promise((r) => setTimeout(r, PANEL_SETTLE_MS)) : Promise.resolve();
+        wait
+          .then(() => Flytz.load3D())
           .then((lib) => {
             if (!this.isConnected) return;
             const accent = getComputedStyle(this).getPropertyValue('--flytz-gold').trim();
@@ -104,6 +131,8 @@
       }
 
       teardown() {
+        clearTimeout(this.switchTimer);
+        this.classList.remove('is-switching');
         this.view?.dispose();
         this.view = null;
         this.classList.remove('is-ready');

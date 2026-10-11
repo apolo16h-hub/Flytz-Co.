@@ -160,7 +160,8 @@
           });
         })
         .catch((err) => {
-          if (window.Flytz3D) console.error('Flytz globe:', err);
+          // "Unavailable" is the normal 2D path; only report a scene that should have worked.
+          if (window.Flytz3D && window.Flytz.can3D()) console.error('Flytz globe:', err);
         });
     }
 
