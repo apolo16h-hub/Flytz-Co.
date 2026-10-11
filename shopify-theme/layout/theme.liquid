@@ -63,7 +63,8 @@
         threeD: {{ settings.flytz_enable_3d | json }},
         threeSrc: {{ 'flytz-3d.js' | asset_url | json }},
         strings: {
-          sizeRemembered: {{ 'flytz.size.remembered' | t: size: '[size]' | json }}
+          sizeRemembered: {{ 'flytz.size.remembered' | t: size: '[size]' | json }},
+          sizeFilter: {{ 'flytz.size.filter' | t: size: '[size]' | json }}
         }
       };
     </script>

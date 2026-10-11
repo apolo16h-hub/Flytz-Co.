@@ -573,7 +573,8 @@
       "inspiration": "Inspiration",
       "coordinates": "Coordinates",
       "explore_capsule": "Explore the {{ destination }} capsule",
-      "editor_hint": "Flytz destination story: add this product to a destination collection (for example France or Japan) to show its landmark here."
+      "editor_hint": "Flytz destination story: add this product to a destination collection (for example France or Japan) to show its landmark here.",
+      "more_from_capsule": "More from the {{ title }} capsule"
     },
     "boarding": {
       "eyebrow": "Flytz Co. Airways · Gate {{ gate }}",
@@ -662,7 +663,8 @@
       "restart": "Try again",
       "alert_title": "Don’t miss the next {{ title }} drop",
       "alert_submit": "Alert me",
-      "alert_done": "You are on the list. We will email you when this capsule drops."
+      "alert_done": "You are on the list. We will email you when this capsule drops.",
+      "previous": "Your last pick"
     },
     "departure": {
       "departs_in": "Departs in",
@@ -675,19 +677,29 @@
     },
     "shipping": {
       "away_html": "Add <strong>{{ amount }}</strong> more to skip the shipping fee",
-      "unlocked": "Free shipping unlocked"
+      "unlocked": "Free shipping unlocked",
+      "note_html": "Free delivery on orders over <strong>{{ amount }}</strong>",
+      "note_unlocked": "Your bag qualifies for free delivery"
     },
     "sticky": {
       "add": "Add to cabin bag"
     },
     "size": {
-      "remembered": "Your usual size, {{ size }}, is selected."
+      "remembered": "Your usual size, {{ size }}, is selected.",
+      "filter": "Show my size ({{ size }})"
     },
     "journey": {
       "label": "Your journey",
       "packed": "Bag packed",
       "checkin": "Check-in",
       "takeoff": "Take-off"
+    },
+    "price": {
+      "save": "Save {{ amount }}"
+    },
+    "cart": {
+      "capsule_progress": "{{ title }} capsule: {{ n }} of {{ total }} pieces packed",
+      "complete_capsule": "See the rest of the capsule"
     }
   }
 }

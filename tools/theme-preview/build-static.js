@@ -52,7 +52,15 @@ const engine = new Liquid({
   root: [path.join(THEME, 'sections'), path.join(THEME, 'snippets')],
   extname: '.liquid',
   strictFilters: true,
-  globals: { settings, routes, shop: shopObj, template: { name: 'index' }, request: { design_mode: false } },
+  globals: {
+    settings,
+    routes,
+    shop: shopObj,
+    template: { name: 'index' },
+    request: { design_mode: false },
+    localization: { country: { iso_code: 'GB' } },
+    cart: { currency: { iso_code: 'GBP' }, total_price: 0, item_count: 0, items: [] },
+  },
 });
 engine.registerTag('schema', {
   parse(tok, remain) {
@@ -172,6 +180,7 @@ async function buildCatalog() {
       const handle = slug(p.title);
       const price = Math.round(parseFloat(p.price.replace(/[^0-9.]/g, '')) * 100);
       const product = {
+        id: 8800000 + Object.keys(products).length,
         title: p.title,
         handle,
         type: p.type,
@@ -203,6 +212,9 @@ async function buildCatalog() {
           img: `img/${handle}.svg`,
           url: `product-${handle}.html`,
           capsule: d.title,
+          capsuleHandle: d.handle,
+          capsuleCount: d.products.length,
+          product: handle,
           type: p.type,
         };
       }
@@ -296,7 +308,17 @@ ${styleBlock}
 <script src="/assets/catalog.js"></script>
 ${capsules ? '<script src="/assets/capsules.js"></script>' : ''}
 <script src="/assets/preview-shim.js"></script>
-<script>window.flytzConfig={threeD:true,threeSrc:'/assets/flytz-3d.js'};window.flytzConfig.strings={sizeRemembered:${JSON.stringify(lookup('flytz.size.remembered').replace(/{{\s*size\s*}}/, '[size]'))}};window.pvStrings=${JSON.stringify({ welcome: lookup('flytz.welcome.success'), departure: lookup('flytz.departure.notified'), quiz: lookup('flytz.quiz.alert_done') })};</script>
+<script>window.flytzConfig={threeD:true,threeSrc:'/assets/flytz-3d.js'};window.flytzConfig.strings={sizeRemembered:${JSON.stringify(lookup('flytz.size.remembered').replace(/{{\s*size\s*}}/, '[size]'))}};window.pvStrings=${JSON.stringify({
+    welcome: lookup('flytz.welcome.success'),
+    departure: lookup('flytz.departure.notified'),
+    quiz: lookup('flytz.quiz.alert_done'),
+    shipAway: lookup('flytz.shipping.away_html'),
+    shipUnlocked: lookup('flytz.shipping.unlocked'),
+    capsuleProgress: lookup('flytz.cart.capsule_progress'),
+    completeCapsule: lookup('flytz.cart.complete_capsule'),
+    shipThreshold: (Number(preset.flytz_free_shipping) || 0) * 100,
+    plane: planeIcon(),
+  })};</script>
 <script src="/assets/flytz-3d.js" defer></script>
 <script src="/assets/flytz-motion.js" defer></script>
 <script src="/assets/flytz-hooks.js" defer></script>
@@ -305,7 +327,7 @@ ${capsules ? '<script src="/assets/capsules.js"></script>' : ''}
 const planeIcon = () => fs.readFileSync(path.join(THEME, 'assets', 'icon-plane.svg'), 'utf8');
 const header = () => `
 <div class="flytz-flight" data-flytz-flight aria-hidden="true"><span class="flytz-flight__line"></span><span class="flytz-flight__plane">${planeIcon()}</span></div>
-<div class="pv-announce"><span class="announcement-bar__message">Now boarding: the Tokyo capsule · Complimentary worldwide shipping</span></div>
+<div class="pv-announce"><span class="announcement-bar__message">Now boarding: the Tokyo capsule · Free UK shipping on orders over £50</span></div>
 <header class="pv-header">
   <div class="page-width pv-header__inner">
     <a class="header__heading-link pv-header__logo" href="index.html"><span class="h2">Flytz Co.</span></a>
@@ -323,6 +345,7 @@ const drawer = () => `
 <cart-drawer class="pv-drawer" role="dialog" aria-modal="true" aria-label="Your cabin bag" aria-hidden="true" inert>
   <div class="pv-drawer__head"><h2>Your cabin bag</h2><button type="button" class="pv-drawer__close" aria-label="Close">✕</button></div>
   <div class="pv-drawer__journey">${journey}</div>
+  <div class="pv-drawer__ship" data-cart-extras></div>
   <div class="pv-drawer__items" data-cart-items></div>
   <div class="pv-drawer__foot">
     <div class="pv-drawer__total"><span>Subtotal</span><strong data-cart-subtotal>£0.00</strong></div>
@@ -357,11 +380,12 @@ async function tail() {
 const docOpen = (title, opts) => `<!doctype html><html class="js" lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>${esc(title)}</title>${headTags(opts)}</head><body class="gradient">`;
 const docClose = '</body></html>';
 
+const saving = (p) => (p.compare_at_price ? ` <span class="price__flytz-save">${esc(lookup('flytz.price.save').replace(/{{\s*amount\s*}}/, money(p.compare_at_price - p.price)))}</span>` : '');
 const card = (p) => `<li><a class="pv-card" href="${p.url}">
   <span class="pv-card__media"><img src="/img/${p.handle}.svg" alt="${esc(p.title)}" width="400" height="500" loading="lazy">${p.compare_at_price ? '<span class="pv-card__badge">Sale</span>' : ''}</span>
   <span class="pv-card__meta">${esc(p.code)} · ${esc(p.dest.title)}</span>
   <span class="pv-card__title">${esc(p.title)}</span>
-  <span class="pv-card__price">${p.compare_at_price ? `<s>${money(p.compare_at_price)}</s>` : ''}${money(p.price)}</span>
+  <span class="pv-card__price">${p.compare_at_price ? `<s>${money(p.compare_at_price)}</s>` : ''}${money(p.price)}${saving(p)}</span>
 </a></li>`;
 const grid = (eyebrow, title, list, id = '') => `<section class="pv-grid-section color-scheme-1 gradient"${id ? ` id="${id}"` : ''}><div class="page-width">
   <div class="flytz-head scroll-trigger animate--slide-in"><p class="flytz-eyebrow">${esc(eyebrow)}</p><h2 class="flytz-title">${esc(title)}</h2></div>
@@ -452,9 +476,10 @@ async function main() {
       <form class="pv-product__info" data-preview-product>
         <a class="pv-crumb" href="${p.dest.url}">FLZ → ${esc(p.code)} · ${esc(p.dest.title)} capsule</a>
         <h1 class="pv-product__title">${esc(p.title)}</h1>
-        <p class="pv-product__price">${p.compare_at_price ? `<s>${money(p.compare_at_price)}</s>` : ''}${money(p.price)}</p>
+        <p class="pv-product__price">${p.compare_at_price ? `<s>${money(p.compare_at_price)}</s>` : ''}${money(p.price)}${saving(p)}</p>
         ${sizes}
         <button type="button" class="button button--full-width" data-preview-add>Add to cabin bag</button>
+        ${await engine.renderFile('flytz-delivery-note', {})}
         <p class="pv-error" role="alert"></p>
         <p class="pv-product__desc">${esc(p.type)} · ${esc(p.note)}. ${esc(p.dest.tagline)}</p>
       </form></div></section>`;
@@ -519,6 +544,7 @@ ${footer()}${drawer()}
       final_line_price: cat[l.id].price * l.qty,
     }));
     const subtotal = items.reduce((s, i) => s + i.final_line_price, 0);
+    const shipping = subtotal >= 5000 ? 0 : 499;
     const n = 1000 + Math.floor(Math.random() * 9000);
     const name = val('pvName');
     const engine = new liquidjs.Liquid();
@@ -533,11 +559,11 @@ ${footer()}${drawer()}
       shipping_address: { name, address1: val('pvAddress'), address2: '', city: val('pvCity'), zip: val('pvZip'), country: val('pvCountry'), country_code: '' },
       subtotal_line_items: items,
       subtotal_price: subtotal,
-      shipping_price: 0,
+      shipping_price: shipping,
       requires_shipping: true,
-      shipping_method: { title: 'Worldwide Express' },
+      shipping_method: { title: shipping ? 'Standard' : 'Standard (free over £50)' },
       tax_price: 0,
-      total_price: subtotal,
+      total_price: subtotal + shipping,
       order_status_url: 'index.html',
     });
     const doc = new DOMParser().parseFromString(html, 'text/html');

@@ -1,0 +1,58 @@
+{%- comment -%}
+  Capsule progress in the cart: for each destination capsule in the bag (up to two), how many of
+  its pieces are packed, with a link to the rest. Counts come straight from the cart.
+{%- endcomment -%}
+{%- liquid
+  assign seen = ','
+  assign handles = ''
+  for item in cart.items
+    for c in item.product.collections
+      assign key = ',' | append: c.handle | append: ','
+      if seen contains key
+        continue
+      endif
+      assign seen = seen | append: c.handle | append: ','
+      capture meta
+        render 'flytz-destination-meta', collection: c
+      endcapture
+      assign parts = meta | strip | split: '|'
+      if parts[2] == 'globe' and c.metafields.flytz.monument == blank
+        continue
+      endif
+      assign handles = handles | append: c.handle | append: ','
+    endfor
+  endfor
+  assign handles = handles | split: ','
+-%}
+{%- for handle in handles limit: 2 -%}
+  {%- liquid
+    assign c = collections[handle]
+    assign total = c.products_count
+    assign packed = 0
+    assign counted = ','
+    for item in cart.items
+      assign pid = ',' | append: item.product_id | append: ','
+      if counted contains pid
+        continue
+      endif
+      for pc in item.product.collections
+        if pc.handle == handle
+          assign packed = packed | plus: 1
+          assign counted = counted | append: item.product_id | append: ','
+          break
+        endif
+      endfor
+    endfor
+  -%}
+  {%- if total > 1 -%}
+    <div class="flytz-capsule-progress" style="--p: {{ packed | times: 100 | divided_by: total }}%;">
+      <p class="flytz-capsule-progress__text">
+        {{- 'flytz.cart.capsule_progress' | t: title: c.title, n: packed, total: total -}}
+      </p>
+      <span class="flytz-capsule-progress__track" aria-hidden="true"><span></span></span>
+      {%- if packed < total -%}
+        <a class="flytz-capsule-progress__link" href="{{ c.url }}">{{ 'flytz.cart.complete_capsule' | t }}</a>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+{%- endfor -%}

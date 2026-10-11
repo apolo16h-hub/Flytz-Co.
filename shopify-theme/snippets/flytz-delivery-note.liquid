@@ -1,0 +1,22 @@
+{%- comment -%}
+  One line under the product page's buy button: the free-delivery threshold, or that the bag
+  already qualifies. Same rules as the cart's free-shipping bar (Theme settings → Flytz).
+{%- endcomment -%}
+{%- liquid
+  assign threshold = settings.flytz_free_shipping | times: 100
+  assign countries = settings.flytz_free_shipping_countries | upcase | remove: ' ' | split: ','
+  assign country = localization.country.iso_code | upcase
+  assign threshold_money = threshold | money
+-%}
+{%- if threshold > 0 and cart.currency.iso_code == shop.currency and countries contains country -%}
+  <p class="flytz-delivery-note{% if cart.total_price >= threshold %} is-unlocked{% endif %}">
+    <span class="flytz-delivery-note__icon" aria-hidden="true">{{- 'icon-plane.svg' | inline_asset_content -}}</span>
+    <span>
+      {%- if cart.total_price >= threshold -%}
+        {{- 'flytz.shipping.note_unlocked' | t -}}
+      {%- else -%}
+        {{- 'flytz.shipping.note_html' | t: amount: threshold_money -}}
+      {%- endif -%}
+    </span>
+  </p>
+{%- endif -%}

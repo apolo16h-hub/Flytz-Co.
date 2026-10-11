@@ -188,12 +188,13 @@
       {
         "type": "range",
         "id": "flytz_welcome_delay",
-        "label": "Show after",
-        "min": 5,
+        "label": "Timer (0 = off)",
+        "min": 0,
         "max": 60,
         "step": 5,
         "unit": "s",
-        "default": 20
+        "default": 0,
+        "info": "With the timer off, the pass appears only after the shopper has explored two destinations, scrolls deep on their second page, or (desktop) heads for the exit."
       },
       {
         "type": "header",
@@ -239,7 +240,14 @@
         "max": 500,
         "step": 5,
         "default": 0,
-        "info": "Order value in your store currency that ships free. It must match your shipping rates. 0 hides the progress bar."
+        "info": "Your free-shipping order value. Must match your shipping rates (Settings → Shipping and delivery). 0 hides the bar and the product page note."
+      },
+      {
+        "type": "text",
+        "id": "flytz_free_shipping_countries",
+        "label": "Free-shipping countries",
+        "default": "GB",
+        "info": "Two-letter country codes, separated by commas. Only shoppers in these countries see free-shipping messages."
       }
     ]
   },

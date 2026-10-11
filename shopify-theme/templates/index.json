@@ -65,32 +65,32 @@
           "type": "highlight",
           "settings": {
             "icon": "star",
-            "title": "Limited capsule runs",
-            "text": "<p>Each destination drop is numbered and never reprinted. When a flight is full, it's full.</p>"
+            "title": "Capsule drops",
+            "text": "<p>Each destination arrives as its own capsule. Join the passenger list to hear about the next one first.</p>"
           }
         },
         "h2": {
           "type": "highlight",
           "settings": {
-            "icon": "globe",
-            "title": "Shipped worldwide",
-            "text": "<p>Tracked delivery to six continents. Your order travels like you do.</p>"
+            "icon": "truck",
+            "title": "Shipped internationally",
+            "text": "<p>Delivery across the UK, Europe, North America, Asia and Oceania. Free UK delivery on orders over £50.</p>"
           }
         },
         "h3": {
           "type": "highlight",
           "settings": {
             "icon": "pin",
-            "title": "Coordinates woven in",
-            "text": "<p>Every piece carries the latitude and longitude of its inspiration, stitched inside the hem.</p>"
+            "title": "Inspired by real places",
+            "text": "<p>Every capsule takes its cues from one destination: its landmarks, materials and colours.</p>"
           }
         },
         "h4": {
           "type": "highlight",
           "settings": {
-            "icon": "leaf",
-            "title": "Responsibly made",
-            "text": "<p>Natural fibres and certified mills, chosen for each destination's craft tradition.</p>"
+            "icon": "lock",
+            "title": "Secure checkout",
+            "text": "<p>Every order goes through Shopify's encrypted checkout.</p>"
           }
         }
       },
@@ -110,22 +110,22 @@
         "s1": {
           "type": "stat",
           "settings": {
-            "value": "24",
-            "label": "Destinations"
+            "value": "15",
+            "label": "Destination capsules"
           }
         },
         "s2": {
           "type": "stat",
           "settings": {
-            "value": "190+",
-            "label": "Pieces designed"
+            "value": "41",
+            "label": "Countries we ship to"
           }
         },
         "s3": {
           "type": "stat",
           "settings": {
-            "value": "6",
-            "label": "Continents shipped"
+            "value": "£50",
+            "label": "Free UK delivery from"
           }
         }
       },

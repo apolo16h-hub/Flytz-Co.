@@ -22,6 +22,7 @@
   endif
 
   assign compare_at_price = target.compare_at_price
+  assign saving = compare_at_price | minus: target.price | money
   assign price = target.price | default: 1999
   assign price_min = product.price_min
   assign price_max = product.price_max
@@ -107,6 +108,9 @@
         <span class="price-item price-item--sale price-item--last">
           {{ money_price }}
         </span>
+        {%- if compare_at_price > price -%}
+          <span class="price__flytz-save">{{ 'flytz.price.save' | t: amount: saving }}</span>
+        {%- endif -%}
       </div>
       {%- if product.selected_or_first_available_variant.unit_price_measurement -%}
         {% render 'unit-price', price: product.selected_or_first_available_variant.unit_price, measurement: product.selected_or_first_available_variant.unit_price_measurement %}

@@ -1123,6 +1123,199 @@ a.flytz-stamp:focus-visible {
   stroke-linejoin: round;
 }
 
+/* ---------- Savings on sale prices ---------- */
+.price__flytz-save {
+  display: inline-block;
+  margin-left: 0.8rem;
+  padding: 0.1rem 0.8rem;
+  border: 1px solid rgba(var(--flytz-gold-rgb), 0.5);
+  border-radius: 10rem;
+  font-size: 0.8em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--flytz-gold-soft);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* ---------- Delivery note under the buy button ---------- */
+.flytz-delivery-note {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 1.2rem 0 0;
+  font-size: 1.3rem;
+  color: rgba(var(--color-foreground), 0.75);
+}
+.flytz-delivery-note strong {
+  color: var(--flytz-gold-soft);
+}
+.flytz-delivery-note__icon {
+  display: grid;
+  flex: none;
+  width: 1.8rem;
+  height: 1.8rem;
+  color: var(--flytz-gold);
+}
+.flytz-delivery-note__icon .icon {
+  width: 100%;
+  height: 100%;
+  rotate: 45deg;
+}
+.flytz-delivery-note__icon .icon path {
+  fill: currentColor;
+}
+.flytz-delivery-note.is-unlocked {
+  color: #93f0b4;
+}
+
+/* ---------- Capsule progress in the cart ---------- */
+.flytz-capsule-progress {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.6rem 1.2rem;
+  margin: 0 0 1.4rem;
+  padding: 1rem 1.4rem;
+  border: 1px solid rgba(var(--color-foreground), 0.1);
+  border-radius: 1.2rem;
+}
+.flytz-capsule-progress__text {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+.flytz-capsule-progress__track {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  display: block;
+  height: 0.3rem;
+  overflow: hidden;
+  border-radius: 10rem;
+  background: rgba(var(--color-foreground), 0.12);
+}
+.flytz-capsule-progress__track span {
+  display: block;
+  width: var(--p, 0%);
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--flytz-gold), var(--flytz-gold-soft));
+}
+.flytz-capsule-progress__link {
+  font-size: 1.2rem;
+  color: var(--flytz-gold-soft);
+  text-underline-offset: 0.3rem;
+  white-space: nowrap;
+}
+
+/* ---------- More from the capsule (product pages) ---------- */
+.flytz-pdest__more {
+  margin: 2.4rem 0 0;
+}
+.flytz-pdest__more-title {
+  margin: 0 0 1.2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--flytz-gold-soft);
+}
+.flytz-pdest__pieces {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.flytz-pdest__pieces li,
+.flytz-pdest__piece {
+  min-width: 0;
+}
+.flytz-pdest__piece {
+  display: grid;
+  gap: 0.4rem;
+  color: inherit;
+  text-decoration: none;
+}
+.flytz-pdest__piece-media {
+  display: block;
+  aspect-ratio: 4 / 5;
+  max-width: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(var(--color-foreground), 0.1);
+  border-radius: 1.2rem;
+  background: rgba(var(--color-foreground), 0.04);
+}
+.flytz-pdest__piece-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s var(--flytz-ease);
+}
+.flytz-pdest__piece:hover .flytz-pdest__piece-media img,
+.flytz-pdest__piece:focus-visible .flytz-pdest__piece-media img {
+  transform: scale(1.04);
+}
+.flytz-pdest__piece-title {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-size: 1.3rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.flytz-pdest__more + .flytz-pdest__cta {
+  margin-top: 2.8rem;
+}
+.flytz-pdest__piece-price {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.5rem;
+  font-size: 1.25rem;
+  color: var(--flytz-gold-soft);
+}
+.flytz-pdest__piece-price s {
+  color: rgba(var(--color-foreground), 0.5);
+}
+
+/* ---------- Size filter chip (collection pages) ---------- */
+.flytz-size-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 1.4rem;
+  padding: 0.8rem 1.6rem;
+  border: 1px solid rgba(var(--flytz-gold-rgb), 0.6);
+  border-radius: 10rem;
+  background: rgba(var(--flytz-gold-rgb), 0.08);
+  color: var(--flytz-gold-soft);
+  font: inherit;
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+.flytz-size-chip:hover,
+.flytz-size-chip:focus-visible {
+  border-color: var(--flytz-gold);
+}
+
+/* ---------- Quiz: last answers ---------- */
+.flytz-quiz__option.is-previous {
+  border-style: dashed;
+  border-color: rgba(var(--flytz-gold-rgb), 0.7);
+}
+.flytz-quiz__previous {
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--flytz-gold-soft);
+}
+
 /* ---------- Phones ---------- */
 @media screen and (max-width: 749px) {
   .flytz-welcome {
@@ -1157,6 +1350,9 @@ a.flytz-stamp:focus-visible {
   }
   .flytz-journey {
     letter-spacing: 0.06em;
+  }
+  .flytz-pdest__pieces {
+    gap: 0.8rem;
   }
   .flytz-passport__toggle {
     left: 1.2rem;

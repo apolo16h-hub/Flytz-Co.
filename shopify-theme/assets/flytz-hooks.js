@@ -127,8 +127,9 @@
       const max = document.documentElement.scrollHeight - window.innerHeight;
       if (max > 0 && window.scrollY / max > 0.6) open();
     }
+    const armedAt = Date.now();
     function onLeave(e) {
-      if (e.clientY <= 0 && !e.relatedTarget) open();
+      if (e.clientY <= 0 && !e.relatedTarget && Date.now() - armedAt > 8000) open();
     }
 
     card.querySelector('[data-welcome-close]')?.addEventListener('click', close);
@@ -197,10 +198,35 @@
       open();
       return;
     }
+    // Value before friction: the pass asks only once the shopper has had something from the shop:
+    // a second destination explored, a deep scroll from their second page on, or (desktop)
+    // heading for the exit after a few seconds. The optional timer is off by default.
+    const views = (parseInt(store.get('flytz.views', 0), 10) || 0) + 1;
+    store.set('flytz.views', views);
+    const explored = new Set(store.get('flytz.explored', []));
+    document.querySelectorAll('[data-flytz-destination]').forEach((el) => {
+      try {
+        explored.add(JSON.parse(el.dataset.flytzDestination).handle);
+      } catch (e) {
+        /* ignore malformed data */
+      }
+    });
+    explored.delete(undefined);
+    store.set('flytz.explored', [...explored]);
     if (state.subscribedAt || (state.dismissedAt && Date.now() - state.dismissedAt < 14 * DAY)) return;
     if (/\/(cart|account|checkouts?)(\/|$)/.test(window.location.pathname)) return;
-    timer = setTimeout(open, (parseInt(card.dataset.delay, 10) || 20) * 1000);
-    window.addEventListener('scroll', onScroll, { passive: true });
+    const delay = parseInt(card.dataset.delay, 10) || 0;
+    if (delay > 0) timer = setTimeout(open, delay * 1000);
+    document.addEventListener('flytz:destination-viewed', (e) => {
+      if (!e.detail || !e.detail.handle || explored.has(e.detail.handle)) return;
+      explored.add(e.detail.handle);
+      store.set('flytz.explored', [...explored]);
+      if (explored.size >= 2) {
+        clearTimeout(timer);
+        timer = setTimeout(open, 1800);
+      }
+    });
+    if (views >= 2 || explored.size >= 2) window.addEventListener('scroll', onScroll, { passive: true });
     if (window.matchMedia('(hover: hover)').matches) document.addEventListener('mouseout', onLeave);
   }
 
@@ -444,6 +470,18 @@
         this.count = this.querySelector('[data-quiz-count]');
         this.countTemplate = this.count.dataset.template || this.count.textContent;
         this.answers = {};
+        // Returning shoppers see their last answers marked, so each question is one tap.
+        const previous = (store.get('flytz.quiz', null) || {}).answers;
+        if (previous && this.dataset.previousLabel) {
+          this.querySelectorAll('.flytz-quiz__option').forEach((o) => {
+            if (previous[o.dataset.key] !== o.dataset.value) return;
+            o.classList.add('is-previous');
+            const tag = document.createElement('em');
+            tag.className = 'flytz-quiz__previous';
+            tag.textContent = this.dataset.previousLabel;
+            o.append(tag);
+          });
+        }
         // Just signed up for this match's drop alert: show the answer and the confirmation again.
         const alertForm = this.querySelector('.flytz-quiz__alert');
         if (alertForm && sentForm() === alertForm && alertForm.querySelector('[data-form-result]')) {
@@ -505,7 +543,7 @@
         const pool = this.destinations.length ? this.destinations : [];
         if (!pool.length) return;
         const d = pool.map((x) => [x, this.score(x)]).sort((a, b) => b[1] - a[1])[0][0];
-        store.set('flytz.quiz', { handle: d.handle, title: d.title, code: d.code || '', url: d.url || '', at: Date.now() });
+        store.set('flytz.quiz', { handle: d.handle, title: d.title, code: d.code || '', url: d.url || '', at: Date.now(), answers: { ...this.answers } });
         this.showResult(d);
         document.dispatchEvent(new CustomEvent('flytz:quiz-result', { detail: { ...d } }));
       }
@@ -763,10 +801,34 @@
     }
   }
 
+  function sizeFilterChip() {
+    const size = store.get(SIZE_KEY, '');
+    const label = window.flytzConfig && window.flytzConfig.strings && window.flytzConfig.strings.sizeFilter;
+    if (!size || !label) return;
+    const inputs = [...document.querySelectorAll('facet-filters-form input[type="checkbox"][name^="filter.v.option."]')].filter(
+      (i) => SIZE_OPTION.test(i.name.slice(16).replace(/[-_]/g, ' ').trim()) && i.value === size && !i.disabled
+    );
+    if (!inputs.length || inputs.some((i) => i.checked)) return;
+    const input = inputs.find((i) => i.closest('#FacetFiltersForm')) || inputs[0];
+    const host = input.closest('facet-filters-form');
+    if (!host || document.querySelector('.flytz-size-chip')) return;
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'flytz-size-chip';
+    chip.textContent = fill(label, { size });
+    chip.addEventListener('click', () => {
+      input.checked = true;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      chip.remove();
+    });
+    host.before(chip);
+  }
+
   const start = () => {
     welcome();
     scopeFormResults();
     rememberSizes();
+    sizeFilterChip();
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
   else start();

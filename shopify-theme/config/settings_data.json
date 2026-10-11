@@ -201,12 +201,13 @@
       "flytz_welcome_heading": "Join the flight list",
       "flytz_welcome_text": "Be the first to hear about new capsules and destinations.",
       "flytz_welcome_code": "",
-      "flytz_welcome_delay": 20,
+      "flytz_welcome_delay": 0,
       "flytz_passport_enable": true,
       "flytz_passport_threshold": 3,
       "flytz_passport_reward": "",
       "flytz_passport_code": "",
-      "flytz_free_shipping": 0
+      "flytz_free_shipping": 50,
+      "flytz_free_shipping_countries": "GB"
     }
   }
 }

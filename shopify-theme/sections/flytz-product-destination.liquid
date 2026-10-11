@@ -78,6 +78,51 @@
                 <dd><span>{{ 'flytz.explorer.pieces_count' | t: count: destination.products_count }}</span></dd>
               </div>
             </dl>
+            {%- comment -%}
+              More from the same capsule, statement piece first: the higher-priced pieces put this
+              one in context, and every card is a next step.
+            {%- endcomment -%}
+            {%- liquid
+              assign siblings = destination.products | sort: 'price' | reverse
+              assign shown = 0
+            -%}
+            {%- capture more -%}
+              {%- for p in siblings -%}
+                {%- if p.id == product.id or p.available == false -%}
+                  {%- continue -%}
+                {%- endif -%}
+                <li>
+                  <a class="flytz-pdest__piece" href="{{ p.url }}">
+                    <span class="flytz-pdest__piece-media">
+                      {%- if p.featured_media -%}
+                        {{-
+                          p.featured_media
+                          | image_url: width: 240
+                          | image_tag: loading: 'lazy', widths: '120, 240', sizes: '80px', alt: p.featured_media.alt
+                        -}}
+                      {%- endif -%}
+                    </span>
+                    <span class="flytz-pdest__piece-title">{{ p.title | escape }}</span>
+                    <span class="flytz-pdest__piece-price">
+                      {%- if p.compare_at_price > p.price -%}
+                        <s>{{ p.compare_at_price | money }}</s>
+                      {%- endif -%}
+                      <span>{{ p.price | money }}</span>
+                    </span>
+                  </a>
+                </li>
+                {%- assign shown = shown | plus: 1 -%}
+                {%- if shown == 3 -%}
+                  {%- break -%}
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endcapture -%}
+            {%- if shown > 0 -%}
+              <div class="flytz-pdest__more">
+                <p class="flytz-pdest__more-title">{{ 'flytz.product.more_from_capsule' | t: title: destination.title }}</p>
+                <ul class="flytz-pdest__pieces">{{ more }}</ul>
+              </div>
+            {%- endif -%}
             <p class="flytz-pdest__cta">
               <a class="button button--secondary" href="{{ destination.url }}">
                 {{- 'flytz.product.explore_capsule' | t: destination: destination.title -}}

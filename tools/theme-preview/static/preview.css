@@ -618,3 +618,5 @@ cart-drawer.pv-drawer.active {
 /* The journey shows only while the bag has items (the theme renders it only then). */
 .pv-drawer__journey { padding: 1.6rem 2.4rem 0; }
 .pv-drawer:has(.pv-drawer__empty) .pv-drawer__journey { display: none; }
+.pv-drawer__ship { padding: 0 2.4rem; }
+.pv-drawer__ship:empty { display: none; }

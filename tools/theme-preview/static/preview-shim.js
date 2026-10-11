@@ -52,7 +52,45 @@
   const itemsHtml = () =>
     lines().length ? lines().map(lineHtml).join('') : '<p class="pv-drawer__empty">Your cabin bag is empty.<br>Pick a destination to start packing.</p>';
 
+  // The theme renders these in Liquid (flytz-shipping-progress, flytz-cart-capsules); the preview
+  // draws the same markup from its own cart.
+  const fillIn = (tpl, values) => String(tpl || '').replace(/{{\s*(\w+)\s*}}/g, (_, k) => values[k] ?? '');
+  const extrasHtml = () => {
+    const S = window.pvStrings || {};
+    const all = lines();
+    if (!all.length) return '';
+    let html = '';
+    const threshold = S.shipThreshold || 0;
+    if (threshold > 0) {
+      const total = subtotal();
+      const left = threshold - total;
+      const pct = Math.min(100, Math.floor((total * 100) / threshold));
+      html += `<div class="flytz-ship${left <= 0 ? ' is-unlocked' : ''}" style="--p: ${pct}%;"><p class="flytz-ship__text">${
+        left > 0 ? fillIn(S.shipAway, { amount: money(left) }) : esc(S.shipUnlocked)
+      }</p><div class="flytz-ship__track" aria-hidden="true"><span class="flytz-ship__fill"></span><span class="flytz-ship__plane">${S.plane || ''}</span></div></div>`;
+    }
+    const capsules = new Map();
+    all.forEach((l) => {
+      const v = CATALOG.variants[l.id];
+      if (!v.capsuleHandle) return;
+      const c = capsules.get(v.capsuleHandle) || { title: v.capsule, total: v.capsuleCount, products: new Set() };
+      c.products.add(v.product);
+      capsules.set(v.capsuleHandle, c);
+    });
+    [...capsules.entries()].slice(0, 2).forEach(([handle, c]) => {
+      if (c.total < 2) return;
+      const n = c.products.size;
+      html += `<div class="flytz-capsule-progress" style="--p: ${Math.floor((n * 100) / c.total)}%;"><p class="flytz-capsule-progress__text">${esc(
+        fillIn(S.capsuleProgress, { title: c.title, n, total: c.total })
+      )}</p><span class="flytz-capsule-progress__track" aria-hidden="true"><span></span></span>${
+        n < c.total ? `<a class="flytz-capsule-progress__link" href="collection-${handle}.html">${esc(S.completeCapsule)}</a>` : ''
+      }</div>`;
+    });
+    return html;
+  };
+
   const refresh = () => {
+    document.querySelectorAll('[data-cart-extras]').forEach((el) => (el.innerHTML = extrasHtml()));
     document.querySelectorAll('[data-cart-count]').forEach((el) => (el.textContent = count()));
     document.querySelectorAll('[data-cart-items]').forEach((el) => (el.innerHTML = itemsHtml()));
     document.querySelectorAll('[data-cart-subtotal]').forEach((el) => (el.textContent = money(subtotal())));

@@ -20,7 +20,7 @@ The original static concept (`index.html`, `css/`, `js/`, described in `STOREFRO
 | Flytz brand story | Home | Story text, stats, optional image |
 | Flytz call to action | Home | "Shop by destination" banner |
 | Flytz destination banner | Collection pages | Each country's collection page becomes its capsule: route (FLZ → CDG), 3D landmark, region, coordinates |
-| Flytz destination story | Product pages | "Inspired by Japan" block with 3D landmark, route, inspiration and coordinates |
+| Flytz destination story | Product pages | "Inspired by Japan" block with 3D landmark, route, inspiration and coordinates, plus up to three more pieces from the same capsule, statement piece first |
 | Flytz sticky add to cart | Product pages | Slim bar with the product, price and an add button that slides up once the real Add to cart button scrolls out of view. It presses the real button, so variants and the cart drawer behave as usual |
 | Boarding sequence | Cart → checkout | 3.7 s real-time 3D departure between the checkout button and Shopify checkout: bags ride the belt loader into the hold, a gold scanner sweeps the jet, it taxis, takes off and climbs out over the city. Skip button included |
 
@@ -35,10 +35,11 @@ as a gold flight path along the top of the page.
 Features that give shoppers a reason to come back, all switchable in *Theme settings → Flytz*:
 
 - **Welcome boarding pass.** A boarding-pass card (passenger name, FLZ → destination, seat 1A,
-  gate stub and barcode) that the shopper fills in themselves. It slides in after a delay, once the shopper has scrolled 60% of a page, or when a desktop shopper
-  moves to leave. It never covers the page, waits while a panel or the cart is open, isn't shown
-  on the cart or password pages, and stays away for 14 days once closed (for good once the
-  shopper signs up). Sign-ups go through Shopify's own customer form and arrive in *Customers*
+  gate stub and barcode) that the shopper fills in themselves. It never appears on a first look
+  around: only after the shopper has explored two destinations, scrolls deep on their second page,
+  or (desktop) heads for the exit after a few seconds. An optional timer can be switched on. It
+  never covers the page, waits while a panel or the cart is open, isn't shown on the cart or
+  password pages, and stays away for 14 days once closed (for good once the shopper signs up). Sign-ups go through Shopify's own customer form and arrive in *Customers*
   tagged `newsletter, flytz-welcome`, subscribed to email marketing. An optional welcome code is
   revealed after signing up. Create the code under *Discounts* first; nothing is shown if the
   setting is empty.
@@ -54,9 +55,14 @@ Features that give shoppers a reason to come back, all switchable in *Theme sett
   for a drop.
 - **Sticky add to cart** on product pages (table above).
 - **Free-shipping progress** in the cart drawer and on the cart page: "Add £20.00 more to skip
-  the shipping fee" with a plane flying along the bar. It is off until you enter your real
-  free-shipping threshold, so it can't promise something your shipping rates don't give, and it
-  only shows for carts in your store currency.
+  the shipping fee" with a plane flying along the bar, and a matching line under the product
+  page's buy button ("Free delivery on orders over £50.00", or "Your bag qualifies"). It is set to
+  £50 for the United Kingdom, matching the store's UK rate (free Standard shipping from £50); EU
+  and international rates have no free tier, so shoppers there never see it. Change both under
+  *Theme settings → Flytz → Cart* if your rates change. Carts in another currency don't show it.
+- **Capsule progress** in the cart: "Japan capsule: 2 of 5 pieces packed" with a link to the rest
+  of that capsule, for up to two capsules in the bag.
+- **Sale savings**: wherever a real compare-at price exists, prices show "Save £60.00".
 - **Page transitions.** Browsers that support cross-page view transitions fade smoothly from page
   to page (not with reduced motion).
 
@@ -67,12 +73,29 @@ Can't Stop Using*, used the way the video asks: no fake urgency, scarcity, progr
 
 | Principle | In the theme |
 |---|---|
-| Smart defaults | The size a shopper picks is pre-selected next time, in capsule panels and on product pages ("Your usual size, M, is selected"), only when in stock. Logged-in customers find their email and name already filled in, and customers who already get your emails never see the welcome pass. The boarding pass's destination starts on the shopper's quiz match or the last capsule they opened |
-| Never start at 0% | The cart drawer and cart page show the journey Bag packed → Check-in → Take-off with the first step done. The passport only appears once the first stamp is earned, and the quiz's progress bar starts on question 1 |
-| Value before signup | Nothing is gated. The quiz shows its answer first and only then offers the drop alert for that capsule; the welcome pass waits for 20 seconds, 60% scroll or exit intent |
+| Smart defaults | The size a shopper picks is pre-selected next time, in capsule panels and on product pages ("Your usual size, M, is selected"), only when in stock. Collection pages offer a one-tap "Show my size (M)" filter when your store has a Size filter (Search & Discovery app). The quiz marks a returning shopper's last answers. Logged-in customers find their email and name already filled in, and customers who already get your emails never see the welcome pass. The boarding pass's destination starts on the shopper's quiz match or the last capsule they opened |
+| Never start at 0% | The cart drawer and cart page show the journey Bag packed → Check-in → Take-off with the first step done, the free-shipping bar fills towards £50, and each capsule shows how many of its pieces are packed. The passport only appears once the first stamp is earned, and the quiz's progress bar starts on question 1 |
+| Value before signup | Nothing is gated. The quiz shows its answer first and only then offers the drop alert for that capsule. The welcome pass waits until the shopper has explored two destinations, scrolls deep on a second page, or heads for the exit |
 | IKEA effect | Shoppers fill in their own boarding pass: their name and destination appear on the ticket, and the destination is saved with the sign-up (`dream-<collection handle>` tag) so you can email each person about the place they picked. Stamps and the quiz build on the same feeling |
 | Loss aversion | Product pages use Dawn's stock block, which says "Low stock: 3 left" only when real inventory is at or below 5 (Theme editor → Product → Inventory status). The free-shipping bar is framed as avoiding the fee: "Add £20.00 more to skip the shipping fee". Quiz alerts read "Don't miss the next Peru drop" |
-| Contrast | Capsule panels lead with the statement piece (highest price first), so the rest of the capsule reads in context. Change it under *Flytz map explorer → Order of pieces in a capsule*. Real compare-at prices show struck through as before |
+| Contrast | Capsule panels lead with the statement piece (highest price first), so the rest of the capsule reads in context. Change it under *Flytz map explorer → Order of pieces in a capsule*. Product pages show more from the same capsule, statement piece first. Sale prices show the real saving ("Save £60.00") next to the struck-through compare-at price |
+| Obvious next action | Add to cabin bag is always the gold primary button (express checkout buttons sit below it). The buy area is trimmed to title, price, stock, size and the button; vendor and quantity were removed (add them back as blocks in the theme editor, and shoppers can still change quantity in the cart). The sticky bar keeps the button in reach |
+
+### Copy that matches the store
+
+The first version's copy promised things the store's settings don't support. These were changed in
+version 4; edit them back in the theme editor if a claim is true for your products:
+
+- Announcement bar: "Complimentary worldwide shipping on capsule orders" became "Free UK shipping on
+  orders over £50" (shipping is £4.99 UK, £14.99 EU, £23.99 international; free only for UK
+  orders from £50).
+- Highlights: "Limited capsule runs" (numbered, never reprinted), "Shipped worldwide" (tracked, six
+  continents), "Coordinates woven in" (stitched inside the hem) and "Responsibly made" (certified
+  mills) became Capsule drops, Shipped internationally (UK, Europe, North America, Asia and
+  Oceania), Inspired by real places and Secure checkout.
+- Brand story stats: 24 destinations, 190+ pieces and 6 continents became 15 destination capsules,
+  41 countries we ship to and free UK delivery from £50. The story text no longer says "limited
+  runs" or "every stitch carries coordinates".
 
 When one customer form on a page is sent, Shopify shows every customer form on that page as sent.
 The theme keeps each confirmation on the form that was actually used (Shopify returns that form's
@@ -154,7 +177,8 @@ Then Shopify admin → **Online Store → Themes → Add theme → Upload zip fi
    `#C9A24B`, and the same fonts, so checkout continues the look.
 7. **Theme settings → Flytz:** accent colours, boarding animation on/off, gate code, 3D scenes
    on/off, flight-path progress line, the welcome boarding pass (heading, text, optional code,
-   delay), the passport (milestone, reward text and code) and the free-shipping threshold.
+   optional timer), the passport (milestone, reward text and code) and free shipping (threshold
+   and the countries it applies to; set to £50 and GB to match the store's rates).
 8. **Next departure:** in the theme editor, pick the capsule collection and enter the drop date
    and time (`2026-12-01 18:00`, your store's time zone). The countdown stays hidden until a date
    is set. The quiz uses the sample destinations until you pick collections in it.
@@ -197,7 +221,7 @@ English strings, so nothing ever shows "translation missing". Translate them wit
   landmarks and their build-up reveal, the boarding scene at each stage at desktop and phone sizes,
   the departures board, map zoom and pin clicks. The suite also ran with WebGL disabled (the 3D file
   is never downloaded and the 2D versions work) and with reduced motion, with no JS errors.
-- The customer hooks have their own headless suite (50 checks, desktop and 390 px phone): the
+- The customer hooks have their own headless suite (57 checks, desktop and 390 px phone): the
   welcome pass opening at 60% scroll, closing and remembering, signing up and not asking again;
   the quiz flow, its matches and "Open the capsule" opening that destination; passport stamps
   from the quiz, collection pages and revisits (no double stamps), the milestone toast, the book's
@@ -207,8 +231,11 @@ English strings, so nothing ever shows "translation missing". Translate them wit
   and no JS errors. It also covers the psychology features: the remembered size in the next capsule
   and on product pages (with its note), statement piece first, the quiz drop alert and its tag,
   the boarding pass destination following the quiz and riding along with the sign-up, and the cart
-  journey. Form-result scoping was tested for each form being sent, an unknown sender and a
-  malformed address. With WebGL off, the quiz result shows the drawn landmark instead.
+  journey, the pass waiting for engagement, the delivery note, more from the capsule, the free-shipping
+  bar both below and above £50, capsule progress and the quiz's remembered answers. The cart's
+  capsule progress was also rendered from the theme's Liquid against mock carts, and the size
+  filter chip against Dawn's filter markup. Form-result scoping was tested for each form being sent,
+  an unknown sender and a malformed address. With WebGL off, the quiz result shows the drawn landmark instead.
 
 The first version of the theme is live on the store. Dawn's real header and cart drawer were
 exercised through stand-ins that mimic Dawn's cart-drawer API, and customer-form posts can't be

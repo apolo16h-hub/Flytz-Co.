@@ -43,7 +43,11 @@
         {%- endif -%}
       </div>
 
-      <flytz-quiz class="flytz-quiz__frame" data-origin="{{ section.settings.origin_code | default: 'FLZ' | escape }}">
+      <flytz-quiz
+        class="flytz-quiz__frame"
+        data-origin="{{ section.settings.origin_code | default: 'FLZ' | escape }}"
+        data-previous-label="{{ 'flytz.quiz.previous' | t | escape }}"
+      >
         <script type="application/json" data-quiz-destinations>
           {%- if section.settings.destinations == blank -%}
             {%- render 'flytz-demo-destinations' -%}

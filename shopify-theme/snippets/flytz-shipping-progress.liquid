@@ -1,12 +1,14 @@
 {%- comment -%}
   Free-shipping progress for the cart drawer and cart page. Off until a threshold is set in
-  Theme settings → Flytz, which must match your real shipping rates. Shown for carts in the
-  store's own currency only.
+  Theme settings → Flytz, which must match your real shipping rates. Shown only to shoppers in the
+  free-shipping countries, for carts in the store's own currency.
 {%- endcomment -%}
 {%- liquid
   assign threshold = settings.flytz_free_shipping | times: 100
+  assign countries = settings.flytz_free_shipping_countries | upcase | remove: ' ' | split: ','
+  assign country = localization.country.iso_code | upcase
   assign show = false
-  if threshold > 0 and cart.item_count > 0 and cart.currency.iso_code == shop.currency
+  if threshold > 0 and cart.item_count > 0 and cart.currency.iso_code == shop.currency and countries contains country
     assign show = true
     assign remaining = threshold | minus: cart.total_price
     assign pct = cart.total_price | times: 100 | divided_by: threshold

@@ -24,7 +24,7 @@
         "announcement-bar-1": {
           "type": "announcement",
           "settings": {
-            "text": "Complimentary worldwide shipping on capsule orders",
+            "text": "Free UK shipping on orders over £50",
             "link": ""
           }
         }
