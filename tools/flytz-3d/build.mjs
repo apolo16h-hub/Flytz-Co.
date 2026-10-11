@@ -1,5 +1,5 @@
 import { build } from 'esbuild';
-import { statSync } from 'node:fs';
+import { readFileSync, statSync } from 'node:fs';
 
 const here = (p) => new URL(p, import.meta.url).pathname;
 const outfile = here('../../shopify-theme/assets/flytz-3d.js');
@@ -19,7 +19,8 @@ await build({
   format: 'iife',
   target: ['es2020'],
   legalComments: 'eof',
-  banner: { js: '/*! Flytz 3D scenes. Built on three.js r186 (MIT License, Copyright 2010-2026 three.js authors). */' },
+  // three.js is MIT licensed: its full licence notice travels with the bundle.
+  banner: { js: `/*! Flytz 3D scenes. Includes three.js r186.\n\n${readFileSync(here('./node_modules/three/LICENSE'), 'utf8').trim().replace(/\*\//g, '* /')}\n*/` },
   plugins: [threeSource],
   outfile,
 });
