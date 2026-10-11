@@ -397,6 +397,7 @@
         if (!html) {
           const url = new URL(d.url, window.location.origin);
           url.searchParams.set('section_id', 'flytz-capsule-products');
+          if (this.dataset.pieceOrder && this.dataset.pieceOrder !== 'manual') url.searchParams.set('sort_by', this.dataset.pieceOrder);
           const res = await fetch(url.toString(), { credentials: 'same-origin' });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const doc = new DOMParser().parseFromString(await res.text(), 'text/html');

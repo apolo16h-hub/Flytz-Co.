@@ -23,15 +23,46 @@
       {%- if settings.flytz_welcome_text != blank -%}
         <p class="flytz-welcome__text">{{ settings.flytz_welcome_text | escape }}</p>
       {%- endif -%}
-      <dl class="flytz-welcome__route" aria-hidden="true">
-        <div><dt>{{ 'flytz.welcome.from' | t }}</dt><dd>FLZ</dd></div>
-        <div class="flytz-welcome__plane">{{- 'icon-plane.svg' | inline_asset_content -}}</div>
-        <div><dt>{{ 'flytz.welcome.to' | t }}</dt><dd>{{ 'flytz.welcome.anywhere' | t }}</dd></div>
-        <div><dt>{{ 'flytz.welcome.seat' | t }}</dt><dd>1A</dd></div>
-      </dl>
+      {%- comment -%}
+        The shopper fills in their own pass: name and destination show on the ticket as they go.
+        The destination list and its default (quiz match or last capsule explored) come from
+        assets/flytz-hooks.js; the choice is added to the sign-up as a dream-<handle> tag.
+      {%- endcomment -%}
+      <div class="flytz-welcome__route">
+        <div class="flytz-welcome__cell flytz-welcome__cell--passenger">
+          <label class="flytz-welcome__label" for="FlytzWelcomeName">{{ 'flytz.welcome.passenger' | t }}</label>
+          <input
+            id="FlytzWelcomeName"
+            class="flytz-welcome__name"
+            type="text"
+            name="contact[first_name]"
+            form="FlytzWelcomeForm"
+            autocomplete="given-name"
+            maxlength="40"
+            placeholder="{{ 'flytz.welcome.name_placeholder' | t | escape }}"
+            value="{{ customer.first_name | escape }}"
+          >
+        </div>
+        <div class="flytz-welcome__cell">
+          <span class="flytz-welcome__label">{{ 'flytz.welcome.from' | t }}</span>
+          <span class="flytz-welcome__value">FLZ</span>
+        </div>
+        <span class="flytz-welcome__plane" aria-hidden="true">{{- 'icon-plane.svg' | inline_asset_content -}}</span>
+        <div class="flytz-welcome__cell flytz-welcome__cell--to">
+          <label class="flytz-welcome__label" for="FlytzWelcomeTo">{{ 'flytz.welcome.to' | t }}</label>
+          <span class="flytz-welcome__value" data-welcome-to-static>{{ 'flytz.welcome.anywhere' | t }}</span>
+          <select id="FlytzWelcomeTo" class="flytz-welcome__value flytz-welcome__to" data-welcome-to hidden>
+            <option value="">{{ 'flytz.welcome.anywhere' | t }}</option>
+          </select>
+        </div>
+        <div class="flytz-welcome__cell">
+          <span class="flytz-welcome__label">{{ 'flytz.welcome.seat' | t }}</span>
+          <span class="flytz-welcome__value">1A</span>
+        </div>
+      </div>
 
       {%- form 'customer', id: 'FlytzWelcomeForm', class: 'flytz-welcome__form' -%}
-        <input type="hidden" name="contact[tags]" value="newsletter,flytz-welcome">
+        <input type="hidden" name="contact[tags]" value="newsletter,flytz-welcome" data-welcome-tags>
         {%- if form.posted_successfully? -%}
           <div class="flytz-welcome__success" data-welcome-success data-form-result role="status">
             <p>{{ 'flytz.welcome.success' | t }}</p>
@@ -59,6 +90,7 @@
               autocapitalize="off"
               spellcheck="false"
               placeholder="{{ 'flytz.welcome.placeholder' | t | escape }}"
+              value="{{ form.email | default: customer.email | escape }}"
               {% if form.errors %}
                 aria-invalid="true" aria-describedby="FlytzWelcomeError"
               {% endif %}

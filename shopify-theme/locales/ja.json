@@ -619,7 +619,10 @@
       "success": "You are on the flight list. Welcome aboard.",
       "your_code": "Your code",
       "copy": "Copy",
-      "copied": "Copied"
+      "copied": "Copied",
+      "passenger": "Passenger",
+      "name_placeholder": "Your name",
+      "destination_label": "Destination"
     },
     "passport": {
       "title": "Passport",
@@ -656,7 +659,10 @@
       "technical": "A technical shell",
       "result": "Your next destination",
       "open": "Open the capsule",
-      "restart": "Try again"
+      "restart": "Try again",
+      "alert_title": "Don’t miss the next {{ title }} drop",
+      "alert_submit": "Alert me",
+      "alert_done": "You are on the list. We will email you when this capsule drops."
     },
     "departure": {
       "departs_in": "Departs in",
@@ -668,11 +674,20 @@
       "notified": "You are on the passenger list. We will tell you when it boards."
     },
     "shipping": {
-      "away_html": "You are <strong>{{ amount }}</strong> away from free shipping",
+      "away_html": "Add <strong>{{ amount }}</strong> more to skip the shipping fee",
       "unlocked": "Free shipping unlocked"
     },
     "sticky": {
       "add": "Add to cabin bag"
+    },
+    "size": {
+      "remembered": "Your usual size, {{ size }}, is selected."
+    },
+    "journey": {
+      "label": "Your journey",
+      "packed": "Bag packed",
+      "checkin": "Check-in",
+      "takeoff": "Take-off"
     }
   }
 }

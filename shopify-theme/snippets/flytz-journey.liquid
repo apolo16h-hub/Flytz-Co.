@@ -1,0 +1,22 @@
+{%- comment -%}
+  Journey steps for the cart drawer and cart page. The first step is done the moment something is
+  in the bag, so the shopper starts a third of the way to take-off.
+{%- endcomment -%}
+{%- if cart.item_count > 0 -%}
+  <ol class="flytz-journey" aria-label="{{ 'flytz.journey.label' | t | escape }}">
+    <li class="flytz-journey__step is-done">
+      <span class="flytz-journey__dot" aria-hidden="true">
+        <svg viewBox="0 0 12 12" focusable="false"><path d="M2.5 6.2 5 8.6l4.5-5"/></svg>
+      </span>
+      {{- 'flytz.journey.packed' | t -}}
+    </li>
+    <li class="flytz-journey__step" aria-current="step">
+      <span class="flytz-journey__dot" aria-hidden="true">2</span>
+      {{- 'flytz.journey.checkin' | t -}}
+    </li>
+    <li class="flytz-journey__step">
+      <span class="flytz-journey__dot" aria-hidden="true">3</span>
+      {{- 'flytz.journey.takeoff' | t -}}
+    </li>
+  </ol>
+{%- endif -%}

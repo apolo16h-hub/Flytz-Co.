@@ -168,7 +168,7 @@ async function buildCatalog() {
     const items = d.products.map((p, i) => {
       const apparel = p.type !== 'Accessory';
       const sizes = apparel ? ['XS', 'S', 'M', 'L', 'XL'] : ['Default Title'];
-      const vs = sizes.map((s, j) => ({ id: ++vid, title: s, available: !(apparel && j === 4 && i % 2 === 0) }));
+      const vs = sizes.map((s, j) => ({ id: ++vid, title: s, options: [s], available: !(apparel && j === 4 && i % 2 === 0) }));
       const handle = slug(p.title);
       const price = Math.round(parseFloat(p.price.replace(/[^0-9.]/g, '')) * 100);
       const product = {
@@ -183,6 +183,7 @@ async function buildCatalog() {
         compare_at_price: i === 1 ? Math.round((price * 1.25) / 500) * 500 : null,
         available: vs.some((v) => v.available),
         variants: vs,
+        options: [apparel ? 'Size' : 'Title'],
         has_only_default_variant: !apparel,
         selected_or_first_available_variant: vs.find((v) => v.available),
         featured_media: { src: `/img/${handle}.svg`, alt: p.title },
@@ -295,7 +296,7 @@ ${styleBlock}
 <script src="/assets/catalog.js"></script>
 ${capsules ? '<script src="/assets/capsules.js"></script>' : ''}
 <script src="/assets/preview-shim.js"></script>
-<script>window.flytzConfig={threeD:true,threeSrc:'/assets/flytz-3d.js'};window.pvStrings=${JSON.stringify({ welcome: lookup('flytz.welcome.success'), departure: lookup('flytz.departure.notified') })};</script>
+<script>window.flytzConfig={threeD:true,threeSrc:'/assets/flytz-3d.js'};window.flytzConfig.strings={sizeRemembered:${JSON.stringify(lookup('flytz.size.remembered').replace(/{{\s*size\s*}}/, '[size]'))}};window.pvStrings=${JSON.stringify({ welcome: lookup('flytz.welcome.success'), departure: lookup('flytz.departure.notified'), quiz: lookup('flytz.quiz.alert_done') })};</script>
 <script src="/assets/flytz-3d.js" defer></script>
 <script src="/assets/flytz-motion.js" defer></script>
 <script src="/assets/flytz-hooks.js" defer></script>
@@ -316,10 +317,12 @@ const header = () => `
     <button type="button" class="pv-bag" data-open-cart aria-haspopup="dialog">Cabin bag <span class="pv-bag__count" data-cart-count>0</span></button>
   </div>
 </header>`;
+let journey = '';
 const drawer = () => `
 <div class="pv-drawer-overlay" aria-hidden="true"></div>
 <cart-drawer class="pv-drawer" role="dialog" aria-modal="true" aria-label="Your cabin bag" aria-hidden="true" inert>
   <div class="pv-drawer__head"><h2>Your cabin bag</h2><button type="button" class="pv-drawer__close" aria-label="Close">✕</button></div>
+  <div class="pv-drawer__journey">${journey}</div>
   <div class="pv-drawer__items" data-cart-items></div>
   <div class="pv-drawer__foot">
     <div class="pv-drawer__total"><span>Subtotal</span><strong data-cart-subtotal>£0.00</strong></div>
@@ -347,6 +350,7 @@ async function hooks() {
   return `${passport}${welcome}`;
 }
 async function tail() {
+  if (!journey) journey = await engine.renderFile('flytz-journey', { cart: { item_count: 1 } });
   const overlay = await engine.renderFile('flytz-boarding-overlay', {});
   return `${drawer()}${await hooks()}${overlay}<script src="/assets/flytz-boarding.js" defer></script>`;
 }
@@ -413,10 +417,14 @@ async function main() {
     rewrite(`<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Flytz Co. Storefront</title>${headTags({ capsules: true })}${header()}<main id="MainContent">${body}</main>${footer()}${await tail()}`)
   );
 
-  // Capsule fragments for the explorer
+  // Capsule fragments for the explorer, in the order the explorer asks for (statement piece first
+  // by default, as Shopify returns for sort_by=price-descending).
+  const explorerConf = Object.values(tpl.sections).find((x) => x.type === 'flytz-destination-explorer') || {};
+  const pieceOrder = (explorerConf.settings && explorerConf.settings.piece_order) || 'price-descending';
   const caps = {};
   for (const c of destList) {
-    const html = await engine.renderFile('flytz-capsule-products', { section: { id: 'flytz-capsule-products', settings: {}, blocks: [] }, collection: c });
+    const products = pieceOrder === 'price-descending' ? [...c.products].sort((a, b) => b.price - a.price) : c.products;
+    const html = await engine.renderFile('flytz-capsule-products', { section: { id: 'flytz-capsule-products', settings: {}, blocks: [] }, collection: { ...c, products } });
     caps[c.handle] = rewrite(html);
   }
   write('assets/capsules.js', `window.FLYTZ_CAPSULES = ${JSON.stringify(caps)};\n`);
@@ -436,7 +444,7 @@ async function main() {
       : `<fieldset class="pv-sizes"><legend>Size</legend>${p.variants
           .map(
             (v) =>
-              `<label class="pv-size"><input type="radio" name="id" value="${v.id}"${v === p.selected_or_first_available_variant ? ' checked' : ''}${v.available ? '' : ' disabled'}><span>${v.title}</span></label>`
+              `<label class="pv-size"><input type="radio" name="id" value="${v.id}" data-option-name="Size" data-option-value="${esc(v.title)}"${v === p.selected_or_first_available_variant ? ' checked' : ''}${v.available ? '' : ' disabled'}><span>${v.title}</span></label>`
           )
           .join('')}</fieldset>`;
     const top = `<section class="color-scheme-1 gradient"><div class="page-width pv-product">

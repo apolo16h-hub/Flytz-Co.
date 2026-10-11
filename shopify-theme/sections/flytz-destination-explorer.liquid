@@ -36,7 +36,11 @@
         {%- endif -%}
       </div>
 
-      <flytz-explorer class="flytz-explorer__frame" data-default-region="{{ section.settings.default_region }}">
+      <flytz-explorer
+        class="flytz-explorer__frame"
+        data-default-region="{{ section.settings.default_region }}"
+        data-piece-order="{{ section.settings.piece_order }}"
+      >
         <script type="application/json" data-flytz-destinations>
           {
             "demo": {{ demo }},
@@ -176,6 +180,17 @@
       "id": "origin_code",
       "label": "Origin code on flight routes",
       "default": "FLZ"
+    },
+    {
+      "type": "select",
+      "id": "piece_order",
+      "label": "Order of pieces in a capsule",
+      "options": [
+        { "value": "price-descending", "label": "Statement piece first (highest price)" },
+        { "value": "manual", "label": "Collection order" }
+      ],
+      "default": "price-descending",
+      "info": "Leading with the statement piece puts the rest of the capsule in context."
     },
     {
       "type": "color_scheme",

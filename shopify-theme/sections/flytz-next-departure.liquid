@@ -86,6 +86,7 @@
                   required
                   autocomplete="email"
                   placeholder="{{ 'flytz.welcome.placeholder' | t | escape }}"
+                  value="{{ form.email | default: customer.email | escape }}"
                   {% if form.errors %}
                     aria-invalid="true" aria-describedby="FlytzDepartureError-{{ section.id }}"
                   {% endif %}

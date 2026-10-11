@@ -61,7 +61,10 @@
     <script>
       window.flytzConfig = {
         threeD: {{ settings.flytz_enable_3d | json }},
-        threeSrc: {{ 'flytz-3d.js' | asset_url | json }}
+        threeSrc: {{ 'flytz-3d.js' | asset_url | json }},
+        strings: {
+          sizeRemembered: {{ 'flytz.size.remembered' | t: size: '[size]' | json }}
+        }
       };
     </script>
     <script src="{{ 'flytz-motion.js' | asset_url }}" defer="defer"></script>
@@ -430,7 +433,16 @@
     {%- if settings.flytz_passport_enable -%}
       {%- render 'flytz-passport' -%}
     {%- endif -%}
-    {%- if settings.flytz_welcome_enable and template.name != 'cart' and template.name != 'password' -%}
+    {%- liquid
+      assign show_welcome = false
+      if settings.flytz_welcome_enable and template.name != 'cart' and template.name != 'password'
+        assign show_welcome = true
+      endif
+      if customer and customer.accepts_marketing
+        assign show_welcome = false
+      endif
+    -%}
+    {%- if show_welcome -%}
       {%- render 'flytz-welcome' -%}
     {%- endif -%}
 

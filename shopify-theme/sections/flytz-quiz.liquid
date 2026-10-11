@@ -16,6 +16,7 @@
   if settings.animations_reveal_on_scroll
     assign reveal = ' scroll-trigger animate--slide-in'
   endif
+  assign alert_form_id = 'FlytzQuizForm-' | append: section.id
 -%}
 
 {%- capture icon_warm -%}<svg viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="6"/><path d="M16 3v4M16 25v4M3 16h4M25 16h4M6.8 6.8l2.8 2.8M22.4 22.4l2.8 2.8M6.8 25.2l2.8-2.8M22.4 9.6l2.8-2.8"/></svg>{%- endcapture -%}
@@ -107,6 +108,41 @@
               <a class="button" href="{{ routes.all_products_collection_url }}" data-result-open>{{ 'flytz.quiz.open' | t }}</a>
               <button type="button" class="button button--secondary" data-quiz-restart>{{ 'flytz.quiz.restart' | t }}</button>
             </div>
+            {%- comment -%}
+              Asked only after the answer is shown (value first). Tagged with the matched capsule.
+            {%- endcomment -%}
+            {%- form 'customer', id: alert_form_id, class: 'flytz-quiz__alert' -%}
+              <input type="hidden" name="contact[tags]" value="newsletter,flytz-quiz" data-quiz-tags>
+              {%- if form.posted_successfully? -%}
+                <p class="flytz-quiz__alert-done" role="status" data-form-result>{{ 'flytz.quiz.alert_done' | t }}</p>
+              {%- endif -%}
+              <div class="flytz-quiz__alert-fields" data-form-fields{% if form.posted_successfully? %} hidden{% endif %}>
+                <label class="flytz-quiz__alert-title" for="FlytzQuizEmail-{{ section.id }}" data-quiz-alert-title data-template="{{ 'flytz.quiz.alert_title' | t: title: '[title]' | escape }}">
+                  {{- 'flytz.quiz.alert_title' | t: title: '' -}}
+                </label>
+                <div class="flytz-quiz__alert-row">
+                  <input
+                    id="FlytzQuizEmail-{{ section.id }}"
+                    type="email"
+                    name="contact[email]"
+                    required
+                    autocomplete="email"
+                    placeholder="{{ 'flytz.welcome.placeholder' | t | escape }}"
+                    value="{{ form.email | default: customer.email | escape }}"
+                    {% if form.errors %}
+                      aria-invalid="true" aria-describedby="FlytzQuizError-{{ section.id }}"
+                    {% endif %}
+                  >
+                  <button type="submit" class="button button--secondary">{{ 'flytz.quiz.alert_submit' | t }}</button>
+                </div>
+                {%- if form.errors -%}
+                  <p id="FlytzQuizError-{{ section.id }}" class="flytz-quiz__alert-error" role="alert" data-form-result>
+                    {{ form.errors.translated_fields.email | capitalize }}
+                    {{ form.errors.messages.email }}
+                  </p>
+                {%- endif -%}
+              </div>
+            {%- endform -%}
           </div>
         </div>
 

@@ -34,8 +34,8 @@ as a gold flight path along the top of the page.
 
 Features that give shoppers a reason to come back, all switchable in *Theme settings → Flytz*:
 
-- **Welcome boarding pass.** A boarding-pass card (FLZ → Anywhere, seat 1A, gate stub and barcode)
-  slides in after a delay, once the shopper has scrolled 60% of a page, or when a desktop shopper
+- **Welcome boarding pass.** A boarding-pass card (passenger name, FLZ → destination, seat 1A,
+  gate stub and barcode) that the shopper fills in themselves. It slides in after a delay, once the shopper has scrolled 60% of a page, or when a desktop shopper
   moves to leave. It never covers the page, waits while a panel or the cart is open, isn't shown
   on the cart or password pages, and stays away for 14 days once closed (for good once the
   shopper signs up). Sign-ups go through Shopify's own customer form and arrive in *Customers*
@@ -49,15 +49,30 @@ Features that give shoppers a reason to come back, all switchable in *Theme sett
   milestone (3 stamps by default) can reveal a reward text and code. Stamps live in the shopper's
   own browser, so there is no account or app.
 - **Destination quiz** and **next departure** sections (table above). Notify-me sign-ups are
-  tagged `newsletter, next-departure, drop-<collection handle>`, so you can email exactly the
-  people waiting for a drop.
+  tagged `newsletter, next-departure, drop-<collection handle>`, and quiz drop alerts
+  `newsletter, flytz-quiz, dream-<collection handle>`, so you can email exactly the people waiting
+  for a drop.
 - **Sticky add to cart** on product pages (table above).
-- **Free-shipping progress** in the cart drawer and on the cart page: "You are £20.00 away from
-  free shipping" with a plane flying along the bar. It is off until you enter your real
+- **Free-shipping progress** in the cart drawer and on the cart page: "Add £20.00 more to skip
+  the shipping fee" with a plane flying along the bar. It is off until you enter your real
   free-shipping threshold, so it can't promise something your shipping rates don't give, and it
   only shows for carts in your store currency.
 - **Page transitions.** Browsers that support cross-page view transitions fade smoothly from page
   to page (not with reduced motion).
+
+### The psychology behind them
+
+The hooks follow the six principles in uxpeak's video *The UX Psychology Behind Apps People
+Can't Stop Using*, used the way the video asks: no fake urgency, scarcity, progress or reviews.
+
+| Principle | In the theme |
+|---|---|
+| Smart defaults | The size a shopper picks is pre-selected next time, in capsule panels and on product pages ("Your usual size, M, is selected"), only when in stock. Logged-in customers find their email and name already filled in, and customers who already get your emails never see the welcome pass. The boarding pass's destination starts on the shopper's quiz match or the last capsule they opened |
+| Never start at 0% | The cart drawer and cart page show the journey Bag packed → Check-in → Take-off with the first step done. The passport only appears once the first stamp is earned, and the quiz's progress bar starts on question 1 |
+| Value before signup | Nothing is gated. The quiz shows its answer first and only then offers the drop alert for that capsule; the welcome pass waits for 20 seconds, 60% scroll or exit intent |
+| IKEA effect | Shoppers fill in their own boarding pass: their name and destination appear on the ticket, and the destination is saved with the sign-up (`dream-<collection handle>` tag) so you can email each person about the place they picked. Stamps and the quiz build on the same feeling |
+| Loss aversion | Product pages use Dawn's stock block, which says "Low stock: 3 left" only when real inventory is at or below 5 (Theme editor → Product → Inventory status). The free-shipping bar is framed as avoiding the fee: "Add £20.00 more to skip the shipping fee". Quiz alerts read "Don't miss the next Peru drop" |
+| Contrast | Capsule panels lead with the statement piece (highest price first), so the rest of the capsule reads in context. Change it under *Flytz map explorer → Order of pieces in a capsule*. Real compare-at prices show struck through as before |
 
 When one customer form on a page is sent, Shopify shows every customer form on that page as sent.
 The theme keeps each confirmation on the form that was actually used (Shopify returns that form's
@@ -182,15 +197,18 @@ English strings, so nothing ever shows "translation missing". Translate them wit
   landmarks and their build-up reveal, the boarding scene at each stage at desktop and phone sizes,
   the departures board, map zoom and pin clicks. The suite also ran with WebGL disabled (the 3D file
   is never downloaded and the 2D versions work) and with reduced motion, with no JS errors.
-- The customer hooks have their own headless suite (39 checks, desktop and 390 px phone): the
+- The customer hooks have their own headless suite (50 checks, desktop and 390 px phone): the
   welcome pass opening at 60% scroll, closing and remembering, signing up and not asking again;
   the quiz flow, its matches and "Open the capsule" opening that destination; passport stamps
   from the quiz, collection pages and revisits (no double stamps), the milestone toast, the book's
   progress and status, focus trap, Escape and focus return; the countdown ticking; notify-me;
   the sticky bar appearing after the real button scrolls away (including jumps straight past it),
   showing the price, lifting the passport button and adding to the cart; no horizontal overflow
-  and no JS errors. Form-result scoping was tested for each form being sent, an unknown sender and
-  a malformed address. With WebGL off, the quiz result shows the drawn landmark instead.
+  and no JS errors. It also covers the psychology features: the remembered size in the next capsule
+  and on product pages (with its note), statement piece first, the quiz drop alert and its tag,
+  the boarding pass destination following the quiz and riding along with the sign-up, and the cart
+  journey. Form-result scoping was tested for each form being sent, an unknown sender and a
+  malformed address. With WebGL off, the quiz result shows the drawn landmark instead.
 
 The first version of the theme is live on the store. Dawn's real header and cart drawer were
 exercised through stand-ins that mimic Dawn's cart-drawer API, and customer-form posts can't be

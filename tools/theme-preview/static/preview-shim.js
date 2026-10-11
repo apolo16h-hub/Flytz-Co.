@@ -196,6 +196,9 @@
         } catch (err) {
           /* storage blocked */
         }
+      } else if (form.id.startsWith('FlytzQuizForm')) {
+        done.className = 'flytz-quiz__alert-done';
+        done.textContent = strings.quiz || '';
       } else {
         done.className = 'flytz-departure__done';
         done.textContent = strings.departure || '';

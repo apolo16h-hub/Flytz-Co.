@@ -41,6 +41,32 @@
     }
   };
 
+  /* ---------- destinations the shopper has seen ---------- */
+  const knownDestinations = () => {
+    const map = new Map();
+    const add = (d) => {
+      if (d && d.handle && !map.has(d.handle)) map.set(d.handle, { handle: d.handle, title: d.title || d.handle, code: d.code || '' });
+    };
+    document.querySelectorAll('script[data-flytz-destinations], script[data-quiz-destinations]').forEach((el) => {
+      try {
+        const data = JSON.parse(el.textContent);
+        (Array.isArray(data) ? data : data.destinations || []).forEach(add);
+      } catch (e) {
+        /* ignore malformed data */
+      }
+    });
+    Object.entries(store.get('flytz.passport', {}).stamps || {}).forEach(([handle, s]) => add({ handle, ...s }));
+    add(store.get('flytz.quiz', null));
+    return [...map.values()].sort((a, b) => a.title.localeCompare(b.title));
+  };
+  // Their latest interest: the quiz match or the last capsule opened, whichever is newer.
+  const latestInterest = () => {
+    const quiz = store.get('flytz.quiz', null);
+    const stamp = Object.entries(store.get('flytz.passport', {}).stamps || {}).sort((a, b) => b[1].at - a[1].at)[0];
+    if (quiz && quiz.handle && (!stamp || quiz.at >= stamp[1].at)) return quiz.handle;
+    return stamp ? stamp[0] : '';
+  };
+
   /* ---------- customer forms ---------- */
   // After one customer form is sent, Shopify renders every customer form on the page as sent.
   // The form that really was sent comes back as the URL hash (its action is /contact#form-id).
@@ -111,6 +137,53 @@
     });
     const copy = card.querySelector('[data-welcome-copy]');
     copy?.addEventListener('click', () => copyText(card.querySelector('[data-welcome-code]').textContent.trim(), copy));
+
+    // The shopper fills in their own pass. The destination defaults to their latest interest
+    // until they pick one themselves.
+    const to = card.querySelector('[data-welcome-to]');
+    const tags = card.querySelector('[data-welcome-tags]');
+    let picked = false;
+    const flip = () => {
+      if (reduced) return;
+      to.classList.remove('is-flip');
+      void to.offsetWidth;
+      to.classList.add('is-flip');
+    };
+    const offer = (d) => {
+      if (!to || !d || !d.handle) return;
+      if (![...to.options].some((o) => o.value === d.handle)) {
+        const o = document.createElement('option');
+        o.value = d.handle;
+        o.textContent = d.code ? `${d.code} · ${d.title || d.handle}` : d.title || d.handle;
+        to.append(o);
+      }
+      to.hidden = false;
+      card.querySelector('[data-welcome-to-static]').hidden = true;
+    };
+    const choose = (handle) => {
+      if (!to || picked || !handle || to.value === handle) return;
+      to.value = handle;
+      if (card.classList.contains('is-open')) flip();
+    };
+    if (to) {
+      knownDestinations().forEach(offer);
+      choose(latestInterest());
+      to.addEventListener('change', () => {
+        picked = true;
+        flip();
+      });
+      document.addEventListener('flytz:quiz-result', (e) => {
+        offer(e.detail);
+        choose(e.detail.handle);
+      });
+      document.addEventListener('flytz:destination-viewed', (e) => {
+        offer(e.detail);
+        choose(e.detail.handle);
+      });
+    }
+    card.querySelector('form')?.addEventListener('submit', () => {
+      if (tags) tags.value = to && to.value ? `${tags.defaultValue},dream-${to.value}` : tags.defaultValue;
+    });
 
     // Signed up with any form on this page: no need to ask again.
     if (card.querySelector('[data-welcome-success]')) {
@@ -371,6 +444,16 @@
         this.count = this.querySelector('[data-quiz-count]');
         this.countTemplate = this.count.dataset.template || this.count.textContent;
         this.answers = {};
+        // Just signed up for this match's drop alert: show the answer and the confirmation again.
+        const alertForm = this.querySelector('.flytz-quiz__alert');
+        if (alertForm && sentForm() === alertForm && alertForm.querySelector('[data-form-result]')) {
+          const last = store.get('flytz.quiz', null);
+          const d = last && this.destinations.find((x) => x.handle === last.handle);
+          if (d) {
+            this.showResult(d, { focus: false });
+            requestAnimationFrame(() => alertForm.scrollIntoView({ block: 'center' }));
+          }
+        }
         this.addEventListener('click', (e) => {
           const option = e.target.closest('.flytz-quiz__option');
           if (option) this.choose(option);
@@ -421,8 +504,14 @@
       finish() {
         const pool = this.destinations.length ? this.destinations : [];
         if (!pool.length) return;
-        this.pick = pool.map((d) => [d, this.score(d)]).sort((a, b) => b[1] - a[1])[0][0];
-        const d = this.pick;
+        const d = pool.map((x) => [x, this.score(x)]).sort((a, b) => b[1] - a[1])[0][0];
+        store.set('flytz.quiz', { handle: d.handle, title: d.title, code: d.code || '', url: d.url || '', at: Date.now() });
+        this.showResult(d);
+        document.dispatchEvent(new CustomEvent('flytz:quiz-result', { detail: { ...d } }));
+      }
+
+      showResult(d, { focus = true } = {}) {
+        this.pick = d;
         this.querySelector('[data-result-title]').textContent = d.title;
         this.querySelector('[data-result-route]').textContent = `${this.dataset.origin || 'FLZ'} → ${d.code || '···'}`;
         this.querySelector('[data-result-tagline]').textContent = d.tagline || '';
@@ -438,8 +527,11 @@
         void stage.offsetWidth;
         stage.classList.add('is-drawing');
         stage.querySelector('flytz-landmark')?.setAttribute('monument', d.monument || 'globe');
-        this.querySelector('[data-result-title]').focus({ preventScroll: true });
-        document.dispatchEvent(new CustomEvent('flytz:quiz-result', { detail: { ...d } }));
+        const alertTitle = this.querySelector('[data-quiz-alert-title]');
+        if (alertTitle) alertTitle.textContent = fill(alertTitle.dataset.template, { title: d.title });
+        const tags = this.querySelector('[data-quiz-tags]');
+        if (tags) tags.value = `${tags.defaultValue},dream-${d.handle}`;
+        if (focus) this.querySelector('[data-result-title]').focus({ preventScroll: true });
       }
 
       restart() {
@@ -571,9 +663,110 @@
     customElements.define('flytz-sticky-buy', FlytzStickyBuy);
   }
 
+  /* ---------- remembered size ---------- */
+  // The size a shopper picks is pre-selected next time, in capsule panels and on product pages,
+  // with a short note saying why. Only sizes that are in stock are pre-selected.
+  const SIZE_OPTION = /^(size|sizes|taille|größe|grösse|talla|tamaño|taglia|tamanho|maat|storlek|størrelse|koko|rozmiar|velikost|veľkosť|méret|mărime|beden|ukuran|kích thước|размер|розмір|μέγεθος|veličina|dydis|izmērs|suurus|サイズ|尺寸|尺码|尺碼|사이즈)$/i;
+  const SIZE_KEY = 'flytz.size';
+  const sizeNote = (size) => fill((window.flytzConfig && window.flytzConfig.strings && window.flytzConfig.strings.sizeRemembered) || '', { size });
+  let autoSizing = false;
+  const sizeIndex = (select) => (select.dataset.optionNames || '').split('|').findIndex((n) => SIZE_OPTION.test(n.trim()));
+  const optionValues = (option) => (option && option.dataset.values ? option.dataset.values.split('|') : []);
+
+  function applyPanelSize(root) {
+    const size = store.get(SIZE_KEY, '');
+    if (!size) return;
+    root.querySelectorAll('select.flytz-capsule__select[data-option-names]').forEach((select) => {
+      const idx = sizeIndex(select);
+      if (idx < 0) return;
+      const current = optionValues(select.selectedOptions[0]);
+      if (current[idx] === size) return;
+      const matches = [...select.options].filter((o) => !o.disabled && optionValues(o)[idx] === size);
+      if (!matches.length) return;
+      // Keep the shopper's other choices (a colour, say) where that combination exists.
+      const same = matches.find((o) => optionValues(o).every((v, i) => i === idx || v === current[i]));
+      select.value = (same || matches[0]).value;
+      select.classList.add('is-remembered');
+      select.title = sizeNote(size);
+    });
+  }
+
+  const showSizeNote = (el, size) => {
+    const anchor = el.closest('variant-selects') || el.closest('fieldset');
+    const text = sizeNote(size);
+    if (!anchor || !text || anchor.parentElement.querySelector('.flytz-size-note')) return;
+    const p = document.createElement('p');
+    p.className = 'flytz-size-note';
+    p.textContent = text;
+    anchor.after(p);
+  };
+
+  function applyProductSize() {
+    const size = store.get(SIZE_KEY, '');
+    if (!size || new URLSearchParams(window.location.search).has('variant')) return;
+    const fire = (el) => {
+      autoSizing = true;
+      el.dispatchEvent(new Event('change', { bubbles: true }));
+      autoSizing = false;
+      showSizeNote(el, size);
+    };
+    const groups = new Map();
+    document.querySelectorAll('input[type="radio"][data-option-name]').forEach((input) => {
+      if (!SIZE_OPTION.test(input.dataset.optionName.trim())) return;
+      if (!groups.has(input.name)) groups.set(input.name, []);
+      groups.get(input.name).push(input);
+    });
+    groups.forEach((inputs) => {
+      const target = inputs.find((i) => (i.dataset.optionValue || i.value) === size);
+      if (!target || target.checked || target.disabled || target.classList.contains('disabled')) return;
+      target.checked = true;
+      fire(target);
+    });
+    document.querySelectorAll('variant-selects select[name^="options["]').forEach((el) => {
+      if (!SIZE_OPTION.test(el.name.slice(8, -1).trim()) || el.value === size) return;
+      const option = [...el.options].find((o) => o.value === size && !o.disabled && !o.classList.contains('disabled'));
+      if (!option) return;
+      el.value = size;
+      fire(el);
+    });
+  }
+
+  function rememberSizes() {
+    document.addEventListener('change', (e) => {
+      const el = e.target;
+      if (autoSizing || !(el instanceof HTMLElement)) return;
+      if (el.matches('select.flytz-capsule__select[data-option-names]')) {
+        const idx = sizeIndex(el);
+        const value = idx >= 0 ? optionValues(el.selectedOptions[0])[idx] : '';
+        if (value) store.set(SIZE_KEY, value);
+        el.classList.remove('is-remembered');
+        el.removeAttribute('title');
+        return;
+      }
+      const name = el.dataset.optionName || ((el.getAttribute('name') || '').match(/^options\[(.+)\]$/) || [])[1];
+      if (name && SIZE_OPTION.test(name.trim())) {
+        const value = el.dataset.optionValue || el.value;
+        if (value) store.set(SIZE_KEY, value);
+        document.querySelectorAll('.flytz-size-note').forEach((n) => n.remove());
+      }
+    });
+    document.querySelectorAll('[data-panel-products]').forEach((el) => {
+      new MutationObserver(() => applyPanelSize(el)).observe(el, { childList: true });
+    });
+    // Dawn's variant pickers react to changes only once its components are defined.
+    if (document.querySelector('variant-selects')) {
+      Promise.all([customElements.whenDefined('variant-selects'), customElements.whenDefined('product-info')]).then(() =>
+        requestAnimationFrame(applyProductSize)
+      );
+    } else {
+      applyProductSize();
+    }
+  }
+
   const start = () => {
     welcome();
     scopeFormResults();
+    rememberSizes();
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
   else start();

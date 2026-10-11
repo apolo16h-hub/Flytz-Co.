@@ -54,10 +54,12 @@
               class="flytz-capsule__select"
               name="id"
               aria-label="{{ 'flytz.explorer.choose_option' | t: product: product.title | escape }}"
+              data-option-names="{{ product.options | join: '|' | escape }}"
             >
               {%- for v in product.variants -%}
                 <option
                   value="{{ v.id }}"
+                  data-values="{{ v.options | join: '|' | escape }}"
                   {% if v.id == variant.id %}
                     selected
                   {% endif %}
