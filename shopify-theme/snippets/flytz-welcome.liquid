@@ -1,0 +1,83 @@
+{%- comment -%}
+  Welcome offer styled as a boarding pass: a non-blocking card that slides in after a short
+  delay, at 60% scroll, or when a desktop shopper heads for the address bar. Sign-ups use
+  Shopify's own customer form (tagged "newsletter, flytz-welcome"); the optional code in
+  Theme settings → Flytz is revealed after signing up. Rendered from layout/theme.liquid.
+{%- endcomment -%}
+<aside
+  class="flytz-welcome"
+  data-flytz-welcome
+  data-delay="{{ settings.flytz_welcome_delay }}"
+  role="dialog"
+  aria-modal="false"
+  aria-labelledby="FlytzWelcomeTitle"
+  hidden
+>
+  <div class="flytz-welcome__pass">
+    <button type="button" class="flytz-welcome__close" data-welcome-close aria-label="{{ 'accessibility.close' | t | escape }}">
+      {{- 'icon-close.svg' | inline_asset_content -}}
+    </button>
+    <div class="flytz-welcome__main">
+      <p class="flytz-welcome__eyebrow">{{ 'flytz.welcome.eyebrow' | t }}</p>
+      <h2 id="FlytzWelcomeTitle" class="flytz-welcome__title">{{ settings.flytz_welcome_heading | escape }}</h2>
+      {%- if settings.flytz_welcome_text != blank -%}
+        <p class="flytz-welcome__text">{{ settings.flytz_welcome_text | escape }}</p>
+      {%- endif -%}
+      <dl class="flytz-welcome__route" aria-hidden="true">
+        <div><dt>{{ 'flytz.welcome.from' | t }}</dt><dd>FLZ</dd></div>
+        <div class="flytz-welcome__plane">{{- 'icon-plane.svg' | inline_asset_content -}}</div>
+        <div><dt>{{ 'flytz.welcome.to' | t }}</dt><dd>{{ 'flytz.welcome.anywhere' | t }}</dd></div>
+        <div><dt>{{ 'flytz.welcome.seat' | t }}</dt><dd>1A</dd></div>
+      </dl>
+
+      {%- form 'customer', id: 'FlytzWelcomeForm', class: 'flytz-welcome__form' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter,flytz-welcome">
+        {%- if form.posted_successfully? -%}
+          <div class="flytz-welcome__success" data-welcome-success data-form-result role="status">
+            <p>{{ 'flytz.welcome.success' | t }}</p>
+            {%- if settings.flytz_welcome_code != blank -%}
+              <p class="flytz-welcome__code">
+                <span class="flytz-welcome__code-label">{{ 'flytz.welcome.your_code' | t }}</span>
+                <strong data-welcome-code>{{ settings.flytz_welcome_code | escape }}</strong>
+                <button type="button" class="flytz-welcome__copy" data-welcome-copy data-copied="{{ 'flytz.welcome.copied' | t | escape }}">
+                  {{- 'flytz.welcome.copy' | t -}}
+                </button>
+              </p>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+        <div class="flytz-welcome__fields" data-form-fields{% if form.posted_successfully? %} hidden{% endif %}>
+          <div class="flytz-welcome__field">
+            <label class="visually-hidden" for="FlytzWelcomeEmail">{{ 'newsletter.label' | t }}</label>
+            <input
+              id="FlytzWelcomeEmail"
+              type="email"
+              name="contact[email]"
+              required
+              autocomplete="email"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+              placeholder="{{ 'flytz.welcome.placeholder' | t | escape }}"
+              {% if form.errors %}
+                aria-invalid="true" aria-describedby="FlytzWelcomeError"
+              {% endif %}
+            >
+            <button type="submit" class="button">{{ 'flytz.welcome.submit' | t }}</button>
+          </div>
+          {%- if form.errors -%}
+            <p id="FlytzWelcomeError" class="flytz-welcome__error" data-welcome-error data-form-result role="alert">
+              {{ form.errors.translated_fields.email | capitalize }}
+              {{ form.errors.messages.email }}
+            </p>
+          {%- endif -%}
+          <p class="flytz-welcome__fine">{{ 'flytz.welcome.fine' | t }}</p>
+        </div>
+      {%- endform -%}
+    </div>
+    <div class="flytz-welcome__stub" aria-hidden="true">
+      <span>{{ 'flytz.welcome.gate' | t: gate: settings.flytz_boarding_gate }}</span>
+      <span class="flytz-welcome__barcode"></span>
+    </div>
+  </div>
+</aside>

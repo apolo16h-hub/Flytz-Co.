@@ -46,12 +46,13 @@ settings.color_schemes = Object.entries(preset.color_schemes).map(([id, s]) => {
 settings.type_body_font = { family: 'Montserrat', fallback_families: 'sans-serif', style: 'normal', weight: 400 };
 settings.type_header_font = { family: 'Cormorant', fallback_families: 'serif', style: 'normal', weight: 500 };
 const routes = { all_products_collection_url: '/collections/all', root: '/' };
+const shopObj = { name: 'Flytz Co.', currency: 'GBP' };
 
 const engine = new Liquid({
   root: [path.join(THEME, 'sections'), path.join(THEME, 'snippets')],
   extname: '.liquid',
   strictFilters: true,
-  globals: { settings, routes, request: { design_mode: false } },
+  globals: { settings, routes, shop: shopObj, template: { name: 'index' }, request: { design_mode: false } },
 });
 engine.registerTag('schema', {
   parse(tok, remain) {
@@ -79,6 +80,33 @@ engine.registerTag('style', {
     emitter.write('<style>');
     yield this.liquid.renderer.renderTemplates(this.tpls, ctx, emitter);
     emitter.write('</style>');
+  },
+});
+// {% form 'customer', id: …, class: … %}: renders a plain form; nothing is posted in the preview.
+engine.registerTag('form', {
+  parse(tok, remain) {
+    this.args = tok.args;
+    this.tpls = [];
+    const stream = this.liquid.parser
+      .parseStream(remain)
+      .on('tag:endform', () => stream.stop())
+      .on('template', (tpl) => this.tpls.push(tpl))
+      .on('end', () => {
+        throw new Error('unclosed form');
+      });
+    stream.start();
+  },
+  *render(ctx, emitter) {
+    const m = /^\s*'([^']+)'(.*)$/s.exec(this.args);
+    const attrs = {};
+    const re = /([\w-]+)\s*:\s*(?:'([^']*)'|([\w.]+))/g;
+    let a;
+    while ((a = re.exec(m[2]))) attrs[a[1]] = a[2] !== undefined ? a[2] : yield this.liquid.evalValue(a[3], ctx);
+    ctx.push({ form: { 'posted_successfully?': false, errors: null } });
+    emitter.write(`<form method="post" action="/contact#${attrs.id || ''}" id="${attrs.id || ''}" accept-charset="UTF-8" class="${attrs.class || ''}"><input type="hidden" name="form_type" value="${m[1]}"><input type="hidden" name="utf8" value="✓">`);
+    yield this.liquid.renderer.renderTemplates(this.tpls, ctx, emitter);
+    emitter.write('</form>');
+    ctx.pop();
   },
 });
 const kw = (args) => Object.fromEntries(args.filter(Array.isArray));
@@ -261,14 +289,16 @@ function headTags({ capsules = false } = {}) {
 ${styleBlock}
 <link rel="stylesheet" href="/assets/base.css">
 <link rel="stylesheet" href="/assets/flytz.css">
+<link rel="stylesheet" href="/assets/flytz-hooks.css">
 <link rel="stylesheet" href="/assets/preview.css">
 <script>document.documentElement.classList.add('js');window.Shopify=window.Shopify||{};window.routes={cart_add_url:'/cart/add',cart_change_url:'/cart/change',cart_update_url:'/cart/update',cart_url:'/cart'};</script>
 <script src="/assets/catalog.js"></script>
 ${capsules ? '<script src="/assets/capsules.js"></script>' : ''}
 <script src="/assets/preview-shim.js"></script>
-<script>window.flytzConfig={threeD:true,threeSrc:'/assets/flytz-3d.js'};</script>
+<script>window.flytzConfig={threeD:true,threeSrc:'/assets/flytz-3d.js'};window.pvStrings=${JSON.stringify({ welcome: lookup('flytz.welcome.success'), departure: lookup('flytz.departure.notified') })};</script>
 <script src="/assets/flytz-3d.js" defer></script>
 <script src="/assets/flytz-motion.js" defer></script>
+<script src="/assets/flytz-hooks.js" defer></script>
 <script src="/assets/animations.js" defer></script>`;
 }
 const planeIcon = () => fs.readFileSync(path.join(THEME, 'assets', 'icon-plane.svg'), 'utf8');
@@ -311,9 +341,14 @@ const footer = () => `
     <p class="pv-footer__fine">Preview of the Flytz Shopify theme with sample products. On a live store, the header, footer, cart drawer and product pages come from Dawn.</p>
   </div>
 </footer>`;
+async function hooks() {
+  const passport = await engine.renderFile('flytz-passport', {});
+  const welcome = await engine.renderFile('flytz-welcome', {});
+  return `${passport}${welcome}`;
+}
 async function tail() {
   const overlay = await engine.renderFile('flytz-boarding-overlay', {});
-  return `${drawer()}${overlay}<script src="/assets/flytz-boarding.js" defer></script>`;
+  return `${drawer()}${await hooks()}${overlay}<script src="/assets/flytz-boarding.js" defer></script>`;
 }
 const docOpen = (title, opts) => `<!doctype html><html class="js" lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>${esc(title)}</title>${headTags(opts)}</head><body class="gradient">`;
 const docClose = '</body></html>';
@@ -364,6 +399,13 @@ async function main() {
     }
     if (conf.type === 'flytz-destination-explorer') conf.settings.destinations = destList;
     if (conf.type === 'flytz-featured-destinations') conf.settings.destinations = [collections.japan, collections.france, collections.usa];
+    if (conf.type === 'flytz-next-departure') {
+      // Preview only: a sample drop five weeks out. On a store the merchant sets the real date.
+      const d = new Date(Date.now() + 35 * 864e5);
+      conf.settings.departure = `${d.toISOString().slice(0, 10)} 18:00`;
+      conf.settings.collection = collections.peru;
+      conf.settings.heading = 'The Peru capsule is boarding soon';
+    }
     body += await renderSection(conf.type, id, conf);
   }
   write(
@@ -409,8 +451,9 @@ async function main() {
         <p class="pv-product__desc">${esc(p.type)} · ${esc(p.note)}. ${esc(p.dest.tagline)}</p>
       </form></div></section>`;
     const story = await renderSection('flytz-product-destination', 'destination', {}, { product: p });
+    const sticky = await renderSection('flytz-sticky-buy', 'sticky', {}, { product: p });
     const more = p.dest.products.filter((o) => o !== p);
-    const page = `${docOpen(`${p.title} · Flytz Co.`)}${header()}<main id="MainContent">${top}${story}${more.length ? grid('More from this capsule', `The ${p.dest.title} capsule`, more) : ''}</main>${footer()}${await tail()}${docClose}`;
+    const page = `${docOpen(`${p.title} · Flytz Co.`)}${header()}<main id="MainContent">${top}${story}${more.length ? grid('More from this capsule', `The ${p.dest.title} capsule`, more) : ''}</main>${sticky}${footer()}${await tail()}${docClose}`;
     write(`product-${p.handle}.html`, rewrite(page));
   }
 
@@ -506,7 +549,7 @@ ${docClose}`;
   write('confirmation.html', rewrite(confirmation));
 
   // Static assets
-  for (const a of ['base.css', 'flytz.css', 'flytz-hero.css', 'flytz-explorer.css', 'flytz-globe.js', 'flytz-explorer.js', 'flytz-boarding.js', 'flytz-motion.js', 'flytz-3d.js', 'animations.js']) {
+  for (const a of ['base.css', 'flytz.css', 'flytz-hero.css', 'flytz-explorer.css', 'flytz-hooks.css', 'flytz-globe.js', 'flytz-explorer.js', 'flytz-boarding.js', 'flytz-motion.js', 'flytz-hooks.js', 'flytz-3d.js', 'animations.js']) {
     fs.copyFileSync(path.join(THEME, 'assets', a), path.join(OUT, 'assets', a));
     files.push(`assets/${a}`);
   }

@@ -362,6 +362,11 @@
       document.documentElement.classList.add('flytz-locked');
       this.panel.querySelector('.flytz-panel__close').focus({ preventScroll: true });
       setHash(`#destination-${handle}`);
+      document.dispatchEvent(
+        new CustomEvent('flytz:destination-viewed', {
+          detail: { handle: d.handle, title: d.title, code: d.code, url: d.url, palette: d.palette, monument: d.monument },
+        })
+      );
     }
 
     close() {

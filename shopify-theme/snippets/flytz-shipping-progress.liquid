@@ -1,0 +1,33 @@
+{%- comment -%}
+  Free-shipping progress for the cart drawer and cart page. Off until a threshold is set in
+  Theme settings → Flytz, which must match your real shipping rates. Shown for carts in the
+  store's own currency only.
+{%- endcomment -%}
+{%- liquid
+  assign threshold = settings.flytz_free_shipping | times: 100
+  assign show = false
+  if threshold > 0 and cart.item_count > 0 and cart.currency.iso_code == shop.currency
+    assign show = true
+    assign remaining = threshold | minus: cart.total_price
+    assign pct = cart.total_price | times: 100 | divided_by: threshold
+    if pct > 100
+      assign pct = 100
+    endif
+    assign remaining_money = remaining | money
+  endif
+-%}
+{%- if show -%}
+  <div class="flytz-ship{% if remaining <= 0 %} is-unlocked{% endif %}" style="--p: {{ pct }}%;">
+    <p class="flytz-ship__text">
+      {%- if remaining > 0 -%}
+        {{- 'flytz.shipping.away_html' | t: amount: remaining_money -}}
+      {%- else -%}
+        {{- 'flytz.shipping.unlocked' | t -}}
+      {%- endif -%}
+    </p>
+    <div class="flytz-ship__track" aria-hidden="true">
+      <span class="flytz-ship__fill"></span>
+      <span class="flytz-ship__plane">{{- 'icon-plane.svg' | inline_asset_content -}}</span>
+    </div>
+  </div>
+{%- endif -%}

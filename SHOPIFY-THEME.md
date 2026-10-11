@@ -13,12 +13,15 @@ The original static concept (`index.html`, `css/`, `js/`, described in `STOREFRO
 | Flytz globe hero | Home | Real-time 3D Earth (WebGL): dotted continents, atmosphere, city beacons, animated flight routes, a modelled airliner with a contrail. Drag to spin; airport-code pins open that destination's capsule. Departures ticker |
 | Flytz destination cards | Home | Featured destinations, each with a 3D landmark model that builds up from its plinth, turns, and leans towards the pointer (or the collection image). Opens the capsule panel when the explorer is on the page |
 | Flytz map explorer | Home | Real world map → continent (the map zooms in, with clickable airport-code pins) → country → slide-in capsule panel: a draggable 3D landmark on the left, the collection's products on the right with size picker and add-to-cart |
+| Flytz destination quiz | Home | "Where to next?": three tap-to-answer questions (weather, perfect day, what you pack) match the shopper to a destination, shown with its 3D landmark and a button that opens that capsule |
 | Flytz departures board | Home | Split-flap airport board of your destination capsules (time, destination, flight, gate, remarks) that flips in and keeps updating; rows open the capsule |
+| Flytz next departure | Home | Countdown to your next capsule drop on split-flap tiles, a notify-me sign-up and the capsule's 3D landmark. Shows "Now boarding" once the time has passed |
 | Flytz highlights | Home | Brand promises (icon blocks) |
 | Flytz brand story | Home | Story text, stats, optional image |
 | Flytz call to action | Home | "Shop by destination" banner |
 | Flytz destination banner | Collection pages | Each country's collection page becomes its capsule: route (FLZ → CDG), 3D landmark, region, coordinates |
 | Flytz destination story | Product pages | "Inspired by Japan" block with 3D landmark, route, inspiration and coordinates |
+| Flytz sticky add to cart | Product pages | Slim bar with the product, price and an add button that slides up once the real Add to cart button scrolls out of view. It presses the real button, so variants and the cart drawer behave as usual |
 | Boarding sequence | Cart → checkout | 3.7 s real-time 3D departure between the checkout button and Shopify checkout: bags ride the belt loader into the hold, a gold scanner sweeps the jet, it taxis, takes off and climbs out over the city. Skip button included |
 
 Also changed from Dawn: dark luxury colour schemes, Cormorant + Montserrat (both from Shopify's
@@ -26,6 +29,39 @@ font library), pill buttons, rounded cards, cart drawer by default, "Your cabin 
 "Proceed to boarding" cart wording. Section headings rise in word by word, cards tilt towards
 the pointer with a moving glare, the hero buttons lean magnetically, and scroll progress shows
 as a gold flight path along the top of the page.
+
+## Customer hooks
+
+Features that give shoppers a reason to come back, all switchable in *Theme settings → Flytz*:
+
+- **Welcome boarding pass.** A boarding-pass card (FLZ → Anywhere, seat 1A, gate stub and barcode)
+  slides in after a delay, once the shopper has scrolled 60% of a page, or when a desktop shopper
+  moves to leave. It never covers the page, waits while a panel or the cart is open, isn't shown
+  on the cart or password pages, and stays away for 14 days once closed (for good once the
+  shopper signs up). Sign-ups go through Shopify's own customer form and arrive in *Customers*
+  tagged `newsletter, flytz-welcome`, subscribed to email marketing. An optional welcome code is
+  revealed after signing up. Create the code under *Discounts* first; nothing is shown if the
+  setting is empty.
+- **Flytz passport.** Every destination capsule a shopper opens (from the map, globe, cards,
+  departures board or quiz, or by visiting a collection or product page) stamps their passport: an ink-stamp toast, a passport button
+  with the count, and a passport book with the stamps, progress across your destinations and a
+  status (Economy explorer → Frequent flyer → Gold traveller → World citizen). Reaching the
+  milestone (3 stamps by default) can reveal a reward text and code. Stamps live in the shopper's
+  own browser, so there is no account or app.
+- **Destination quiz** and **next departure** sections (table above). Notify-me sign-ups are
+  tagged `newsletter, next-departure, drop-<collection handle>`, so you can email exactly the
+  people waiting for a drop.
+- **Sticky add to cart** on product pages (table above).
+- **Free-shipping progress** in the cart drawer and on the cart page: "You are £20.00 away from
+  free shipping" with a plane flying along the bar. It is off until you enter your real
+  free-shipping threshold, so it can't promise something your shipping rates don't give, and it
+  only shows for carts in your store currency.
+- **Page transitions.** Browsers that support cross-page view transitions fade smoothly from page
+  to page (not with reduced motion).
+
+When one customer form on a page is sent, Shopify shows every customer form on that page as sent.
+The theme keeps each confirmation on the form that was actually used (Shopify returns that form's
+id in the address) and falls back to Shopify's behaviour when it can't tell.
 
 ## 3D and motion
 
@@ -102,7 +138,11 @@ Then Shopify admin → **Online Store → Themes → Add theme → Upload zip fi
 6. **Checkout branding:** Settings → Checkout → Customize: background `#0B0F17`, accent/buttons
    `#C9A24B`, and the same fonts, so checkout continues the look.
 7. **Theme settings → Flytz:** accent colours, boarding animation on/off, gate code, 3D scenes
-   on/off, flight-path progress line.
+   on/off, flight-path progress line, the welcome boarding pass (heading, text, optional code,
+   delay), the passport (milestone, reward text and code) and the free-shipping threshold.
+8. **Next departure:** in the theme editor, pick the capsule collection and enter the drop date
+   and time (`2026-12-01 18:00`, your store's time zone). The countdown stays hidden until a date
+   is set. The quiz uses the sample destinations until you pick collections in it.
 
 ## What Shopify allows around checkout
 
@@ -142,10 +182,20 @@ English strings, so nothing ever shows "translation missing". Translate them wit
   landmarks and their build-up reveal, the boarding scene at each stage at desktop and phone sizes,
   the departures board, map zoom and pin clicks. The suite also ran with WebGL disabled (the 3D file
   is never downloaded and the 2D versions work) and with reduced motion, with no JS errors.
+- The customer hooks have their own headless suite (39 checks, desktop and 390 px phone): the
+  welcome pass opening at 60% scroll, closing and remembering, signing up and not asking again;
+  the quiz flow, its matches and "Open the capsule" opening that destination; passport stamps
+  from the quiz, collection pages and revisits (no double stamps), the milestone toast, the book's
+  progress and status, focus trap, Escape and focus return; the countdown ticking; notify-me;
+  the sticky bar appearing after the real button scrolls away (including jumps straight past it),
+  showing the price, lifting the passport button and adding to the cart; no horizontal overflow
+  and no JS errors. Form-result scoping was tested for each form being sent, an unknown sender and
+  a malformed address. With WebGL off, the quiz result shows the drawn landmark instead.
 
-Not yet done: it hasn't been uploaded to a live store. Dawn's real header and cart drawer were
-exercised through stand-ins that mimic Dawn's cart-drawer API, so a quick click-through on an
-unpublished copy is the remaining check.
+The first version of the theme is live on the store. Dawn's real header and cart drawer were
+exercised through stand-ins that mimic Dawn's cart-drawer API, and customer-form posts can't be
+sent from the preview, so a click-through of each new version on an unpublished copy (including
+one real sign-up) is the remaining check before publishing.
 
 ## Credits and licences
 

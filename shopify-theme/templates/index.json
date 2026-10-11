@@ -8,6 +8,10 @@
       "type": "flytz-featured-destinations",
       "settings": {}
     },
+    "quiz": {
+      "type": "flytz-quiz",
+      "settings": {}
+    },
     "explorer": {
       "type": "flytz-destination-explorer",
       "settings": {
@@ -40,6 +44,12 @@
         "columns_mobile": "2",
         "padding_top": 64,
         "padding_bottom": 64
+      }
+    },
+    "next_departure": {
+      "type": "flytz-next-departure",
+      "settings": {
+        "color_scheme": "scheme-1"
       }
     },
     "departures": {
@@ -136,8 +146,10 @@
   "order": [
     "hero",
     "featured_destinations",
+    "quiz",
     "explorer",
     "featured_collection",
+    "next_departure",
     "departures",
     "highlights",
     "story",

@@ -35,8 +35,9 @@
 {%- endstyle -%}
 
 {%- if destination -%}
+  {%- capture stamp -%}{"handle": {{ destination.handle | json }}, "title": {{ destination.title | json }}, "code": {{ m[1] | default: '' | json }}, "url": {{ destination.url | json }}, "palette": {{ m[3] | json }}}{%- endcapture -%}
   <div class="color-{{ section.settings.color_scheme }} gradient">
-    <section class="section-{{ section.id }}-padding">
+    <section class="section-{{ section.id }}-padding" data-flytz-destination="{{ stamp | escape }}">
       <div class="page-width">
         <div
           class="flytz-pdest{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"

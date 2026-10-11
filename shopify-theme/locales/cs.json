@@ -629,6 +629,74 @@
       "status_gate_open": "Gate open",
       "status_on_time": "On time",
       "status_new_arrivals": "New arrivals"
+    },
+    "welcome": {
+      "eyebrow": "Boarding pass · Flight FZ001",
+      "from": "From",
+      "to": "To",
+      "anywhere": "Anywhere",
+      "seat": "Seat",
+      "gate": "Gate {{ gate }}",
+      "placeholder": "Your email address",
+      "submit": "Get my boarding pass",
+      "fine": "No spam. Unsubscribe any time.",
+      "success": "You are on the flight list. Welcome aboard.",
+      "your_code": "Your code",
+      "copy": "Copy",
+      "copied": "Copied"
+    },
+    "passport": {
+      "title": "Passport",
+      "eyebrow": "Flytz passport",
+      "heading": "Your travel passport",
+      "stamped": "Passport stamped",
+      "progress": "{{ n }} of {{ total }} destinations explored",
+      "milestone": "{{ n }} stamps. You have reached frequent flyer status.",
+      "unlocked": "Frequent flyer status unlocked.",
+      "next": "Collect {{ n }} more stamps to unlock your reward.",
+      "empty": "Open any destination capsule to collect your first stamp.",
+      "status_1": "Economy explorer",
+      "status_2": "Frequent flyer",
+      "status_3": "Gold traveller",
+      "status_4": "World citizen: every destination explored"
+    },
+    "quiz": {
+      "step": "Question {{ n }} of {{ total }}",
+      "q1": "Pick your weather",
+      "warm": "Sun-soaked",
+      "warm_hint": "Long, golden days",
+      "mild": "Mild and breezy",
+      "mild_hint": "Light layers",
+      "cool": "Crisp and cool",
+      "cool_hint": "Knitwear weather",
+      "q2": "Your perfect day",
+      "culture": "Monuments and museums",
+      "city": "Rooftops and nightlife",
+      "nature": "Trails and viewpoints",
+      "coast": "Coastline and cafés",
+      "q3": "What do you pack first?",
+      "tailored": "Tailored layers",
+      "relaxed": "Easy linen",
+      "technical": "A technical shell",
+      "result": "Your next destination",
+      "open": "Open the capsule",
+      "restart": "Try again"
+    },
+    "departure": {
+      "departs_in": "Departs in",
+      "days": "Days",
+      "hours": "Hours",
+      "minutes": "Minutes",
+      "seconds": "Seconds",
+      "now_boarding": "Now boarding",
+      "notified": "You are on the passenger list. We will tell you when it boards."
+    },
+    "shipping": {
+      "away_html": "You are <strong>{{ amount }}</strong> away from free shipping",
+      "unlocked": "Free shipping unlocked"
+    },
+    "sticky": {
+      "add": "Add to cabin bag"
     }
   }
 }

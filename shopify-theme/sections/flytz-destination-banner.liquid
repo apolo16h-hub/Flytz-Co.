@@ -9,7 +9,8 @@
 -%}
 
 <div class="color-{{ section.settings.color_scheme }} gradient">
-  <section class="flytz-banner" style="--dest-tint: {{ m[3] }};">
+  {%- capture stamp -%}{"handle": {{ collection.handle | json }}, "title": {{ collection.title | json }}, "code": {{ m[1] | default: '' | json }}, "url": {{ collection.url | json }}, "palette": {{ m[3] | json }}}{%- endcapture -%}
+  <section class="flytz-banner" style="--dest-tint: {{ m[3] }};" data-flytz-destination="{{ stamp | escape }}">
     <div class="page-width flytz-banner__inner">
       <div class="{% if settings.animations_reveal_on_scroll %}scroll-trigger animate--slide-in{% endif %}">
         <p class="flytz-banner__route">

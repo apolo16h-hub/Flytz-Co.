@@ -196,7 +196,17 @@
       "flytz_boarding_enable": true,
       "flytz_boarding_gate": "G7",
       "flytz_enable_3d": true,
-      "flytz_flight_progress": true
+      "flytz_flight_progress": true,
+      "flytz_welcome_enable": true,
+      "flytz_welcome_heading": "Join the flight list",
+      "flytz_welcome_text": "Be the first to hear about new capsules and destinations.",
+      "flytz_welcome_code": "",
+      "flytz_welcome_delay": 20,
+      "flytz_passport_enable": true,
+      "flytz_passport_threshold": 3,
+      "flytz_passport_reward": "",
+      "flytz_passport_code": "",
+      "flytz_free_shipping": 0
     }
   }
 }

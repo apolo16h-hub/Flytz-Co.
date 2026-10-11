@@ -178,6 +178,30 @@
       form.innerHTML = '<p>You’re on the flight list. First departures land in your inbox.</p>';
     }
     if (form.matches('[data-preview-product]')) e.preventDefault();
+    // Shopify customer forms (welcome pass, notify me): show the theme's own success state.
+    if (form.querySelector('input[name="form_type"][value="customer"]')) {
+      e.preventDefault();
+      const strings = window.pvStrings || {};
+      [...form.children].forEach((el) => el.type !== 'hidden' && el.remove());
+      const welcome = form.closest('[data-flytz-welcome]');
+      const done = document.createElement(welcome ? 'div' : 'p');
+      done.setAttribute('role', 'status');
+      if (welcome) {
+        done.className = 'flytz-welcome__success';
+        done.dataset.welcomeSuccess = '';
+        done.innerHTML = '<p></p>';
+        done.firstChild.textContent = strings.welcome || '';
+        try {
+          localStorage.setItem('flytz.welcome', JSON.stringify({ subscribedAt: Date.now() }));
+        } catch (err) {
+          /* storage blocked */
+        }
+      } else {
+        done.className = 'flytz-departure__done';
+        done.textContent = strings.departure || '';
+      }
+      form.append(done);
+    }
   });
 
   document.addEventListener('DOMContentLoaded', refresh);

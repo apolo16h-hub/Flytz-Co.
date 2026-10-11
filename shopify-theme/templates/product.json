@@ -99,12 +99,19 @@
       "settings": {
         "color_scheme": "scheme-1"
       }
+    },
+    "sticky_buy": {
+      "type": "flytz-sticky-buy",
+      "settings": {
+        "show_on_desktop": true
+      }
     }
   },
   "order": [
     "main",
     "disclosures",
     "destination",
-    "related-products"
+    "related-products",
+    "sticky_buy"
   ]
 }

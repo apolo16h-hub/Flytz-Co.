@@ -1,0 +1,57 @@
+{%- comment -%}
+  Slim add-to-cart bar that slides up once the product's own Add to cart button scrolls out of
+  view. It presses the real button, so variants, quantities and the cart drawer behave as usual.
+{%- endcomment -%}
+{%- if product -%}
+  <flytz-sticky-buy
+    class="flytz-sticky-buy{% unless section.settings.show_on_desktop %} flytz-sticky-buy--mobile-only{% endunless %}"
+    data-target='product-form [name="add"], [data-preview-add]'
+    hidden
+  >
+    <div class="page-width flytz-sticky-buy__inner">
+      {%- if product.featured_media -%}
+        <div class="flytz-sticky-buy__media">
+          {{-
+            product.featured_media
+            | image_url: width: 120
+            | image_tag: loading: 'lazy', widths: '60, 120', sizes: '60px', alt: product.featured_media.alt
+          -}}
+        </div>
+      {%- endif -%}
+      <div class="flytz-sticky-buy__info">
+        <p class="flytz-sticky-buy__title">{{ product.title | escape }}</p>
+        <p class="flytz-sticky-buy__price" data-sticky-price>
+          {{- product.selected_or_first_available_variant.price | money -}}
+        </p>
+      </div>
+      <button type="button" class="button flytz-sticky-buy__button" data-sticky-add>
+        {{- 'flytz.sticky.add' | t -}}
+      </button>
+    </div>
+  </flytz-sticky-buy>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Flytz sticky add to cart",
+  "tag": "div",
+  "class": "section flytz-section-sticky",
+  "enabled_on": {
+    "templates": ["product"]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_on_desktop",
+      "label": "Show on desktop",
+      "default": true,
+      "info": "Always shown on phones."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Flytz sticky add to cart"
+    }
+  ]
+}
+{% endschema %}

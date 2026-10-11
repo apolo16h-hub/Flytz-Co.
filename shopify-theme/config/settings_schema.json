@@ -155,6 +155,91 @@
         "label": "Show scroll progress as a flight path",
         "default": true,
         "info": "A thin gold line with a small aircraft along the top of the page."
+      },
+      {
+        "type": "header",
+        "content": "Welcome boarding pass"
+      },
+      {
+        "type": "checkbox",
+        "id": "flytz_welcome_enable",
+        "label": "Show welcome sign-up",
+        "default": true,
+        "info": "A boarding-pass card that slides in after a short delay, at 60% scroll, or when a desktop visitor heads to leave. Shown once every 14 days if dismissed. Sign-ups join your customer list with the tags newsletter and flytz-welcome."
+      },
+      {
+        "type": "text",
+        "id": "flytz_welcome_heading",
+        "label": "Heading",
+        "default": "Join the flight list"
+      },
+      {
+        "type": "textarea",
+        "id": "flytz_welcome_text",
+        "label": "Text",
+        "default": "Be the first to hear about new capsules and destinations."
+      },
+      {
+        "type": "text",
+        "id": "flytz_welcome_code",
+        "label": "Code revealed after sign-up",
+        "info": "Optional. Create the discount first in Discounts, then enter its code here and mention the offer in the heading."
+      },
+      {
+        "type": "range",
+        "id": "flytz_welcome_delay",
+        "label": "Show after",
+        "min": 5,
+        "max": 60,
+        "step": 5,
+        "unit": "s",
+        "default": 20
+      },
+      {
+        "type": "header",
+        "content": "Passport"
+      },
+      {
+        "type": "checkbox",
+        "id": "flytz_passport_enable",
+        "label": "Show the Flytz passport",
+        "default": true,
+        "info": "Visitors collect a stamp for every destination capsule they open. Stamps stay in their browser."
+      },
+      {
+        "type": "range",
+        "id": "flytz_passport_threshold",
+        "label": "Stamps for the reward",
+        "min": 2,
+        "max": 10,
+        "step": 1,
+        "default": 3
+      },
+      {
+        "type": "text",
+        "id": "flytz_passport_reward",
+        "label": "Reward message",
+        "info": "Optional, e.g. Frequent flyer: 10% off your next capsule."
+      },
+      {
+        "type": "text",
+        "id": "flytz_passport_code",
+        "label": "Reward code",
+        "info": "Optional. Create the discount first in Discounts."
+      },
+      {
+        "type": "header",
+        "content": "Cart"
+      },
+      {
+        "type": "range",
+        "id": "flytz_free_shipping",
+        "label": "Free shipping from",
+        "min": 0,
+        "max": 500,
+        "step": 5,
+        "default": 0,
+        "info": "Order value in your store currency that ships free. It must match your shipping rates. 0 hides the progress bar."
       }
     ]
   },
