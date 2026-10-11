@@ -1,6 +1,7 @@
 {%- comment -%}
   Pre-checkout boarding sequence. Rendered once from layout/theme.liquid when enabled in
-  Theme settings → Flytz. Driven by assets/flytz-boarding.js.
+  Theme settings → Flytz. Driven by assets/flytz-boarding.js, which plays the real-time 3D
+  departure scene in [data-boarding-3d] when the device supports it, and the CSS version otherwise.
 {%- endcomment -%}
 <div
   id="FlytzBoarding"
@@ -11,6 +12,7 @@
   aria-hidden="true"
   inert
 >
+  <div class="flytz-boarding__stage3d" data-boarding-3d aria-hidden="true"></div>
   <div class="flytz-boarding__sky" aria-hidden="true">
     <span class="flytz-boarding__cloud"></span>
     <span class="flytz-boarding__cloud"></span>

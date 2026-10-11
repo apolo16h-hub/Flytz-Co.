@@ -10,7 +10,7 @@
 }
 
 /* Dawn hides every empty div (div:empty { display: none }); these are intentionally empty. */
-:is(.flytz-hero__vignette, .flytz-panel-overlay, .flytz-boarding__runway, .flytz-skeleton, .flytz-stage__tilt):empty {
+:is(.flytz-hero__vignette, .flytz-panel-overlay, .flytz-boarding__runway, .flytz-boarding__stage3d, .flytz-skeleton, .flytz-stage__tilt):empty {
   display: block;
 }
 
@@ -779,6 +779,76 @@ flytz-landmark.is-ready .flytz-landmark3d {
   color: var(--flytz-gold-soft);
 }
 
+/* Real-time 3D departure (flytz-3d.js): the scene fills the screen and the card becomes a lower-third HUD. */
+.flytz-boarding__stage3d {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.flytz-boarding3d {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.flytz-boarding:not(.has-3d) .flytz-boarding__stage3d {
+  visibility: hidden;
+}
+.flytz-boarding.has-3d :is(.flytz-boarding__sky, .flytz-boarding__runway, .flytz-boarding__jet, .flytz-boarding__bags) {
+  display: none;
+}
+.flytz-boarding.has-3d {
+  place-items: end center;
+  padding: 0 2rem max(2.4rem, env(safe-area-inset-bottom));
+  background: #05080f;
+}
+.flytz-boarding.has-3d .flytz-boarding__card {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr) auto;
+  align-items: center;
+  gap: 1.2rem 3.2rem;
+  width: min(108rem, 100%);
+  margin: 0;
+  padding: 2rem 2.8rem;
+  border-radius: 1.8rem;
+  background: rgba(8, 11, 18, 0.66);
+  text-align: left;
+}
+.flytz-boarding.has-3d .flytz-boarding__card > .flytz-eyebrow {
+  grid-column: 1;
+  grid-row: 1;
+  align-self: end;
+  margin: 0;
+}
+.flytz-boarding.has-3d .flytz-boarding__title {
+  grid-column: 1;
+  grid-row: 2;
+  align-self: start;
+  margin: 0;
+  font-size: 2.6rem;
+}
+.flytz-boarding.has-3d .flytz-boarding__steps {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0;
+}
+.flytz-boarding.has-3d .flytz-boarding__status {
+  grid-column: 2;
+  grid-row: 2;
+  min-height: 0;
+  margin: 0;
+}
+.flytz-boarding.has-3d .flytz-boarding__bar {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  height: 0.4rem;
+}
+.flytz-boarding.has-3d .flytz-boarding__skip {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+  margin: 0;
+}
+
 /* ---------- Responsive ---------- */
 @media screen and (max-width: 989px) {
   .flytz-dest-grid {
@@ -826,6 +896,25 @@ flytz-landmark.is-ready .flytz-landmark3d {
   }
   .flytz-boarding__title {
     font-size: 2.4rem;
+  }
+  .flytz-boarding.has-3d {
+    padding: 0 1.2rem max(1.2rem, env(safe-area-inset-bottom));
+  }
+  .flytz-boarding.has-3d .flytz-boarding__card {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+    padding: 1.8rem 1.8rem 1.4rem;
+    text-align: center;
+  }
+  .flytz-boarding.has-3d .flytz-boarding__card > * {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .flytz-boarding.has-3d .flytz-boarding__title {
+    font-size: 2.2rem;
+  }
+  .flytz-boarding.has-3d .flytz-boarding__steps {
+    margin-top: 0.4rem;
   }
   .header__heading-link .h2 {
     font-size: 1.3rem;
