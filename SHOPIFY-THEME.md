@@ -42,7 +42,10 @@ Features that give shoppers a reason to come back, all switchable in *Theme sett
   password pages, and stays away for 14 days once closed (for good once the shopper signs up). Sign-ups go through Shopify's own customer form and arrive in *Customers*
   tagged `newsletter, flytz-welcome`, subscribed to email marketing. An optional welcome code is
   revealed after signing up. Create the code under *Discounts* first; nothing is shown if the
-  setting is empty.
+  setting is empty. This store uses **BOARDING10**: 10% off the whole order, one use per
+  customer, no end date (Shopify has no first-order-only rule without a customer segment, and
+  segments can lag behind brand-new sign-ups). A 10% discount can take an order back under the
+  £50 free-shipping line; Shopify then charges UK standard shipping as usual.
 - **Flytz passport.** Every destination capsule a shopper opens (from the map, globe, cards,
   departures board or quiz, or by visiting a collection or product page) stamps their passport: an ink-stamp toast, a passport button
   with the count, and a passport book with the stamps, progress across your destinations and a

@@ -310,6 +310,10 @@ ${capsules ? '<script src="/assets/capsules.js"></script>' : ''}
 <script src="/assets/preview-shim.js"></script>
 <script>window.flytzConfig={threeD:true,threeSrc:'/assets/flytz-3d.js'};window.flytzConfig.strings={sizeRemembered:${JSON.stringify(lookup('flytz.size.remembered').replace(/{{\s*size\s*}}/, '[size]'))}};window.pvStrings=${JSON.stringify({
     welcome: lookup('flytz.welcome.success'),
+    welcomeCode: preset.flytz_welcome_code || '',
+    yourCode: lookup('flytz.welcome.your_code'),
+    copy: lookup('flytz.welcome.copy'),
+    copied: lookup('flytz.welcome.copied'),
     departure: lookup('flytz.departure.notified'),
     quiz: lookup('flytz.quiz.alert_done'),
     shipAway: lookup('flytz.shipping.away_html'),

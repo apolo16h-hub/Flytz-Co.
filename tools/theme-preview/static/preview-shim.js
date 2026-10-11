@@ -229,6 +229,29 @@
         done.dataset.welcomeSuccess = '';
         done.innerHTML = '<p></p>';
         done.firstChild.textContent = strings.welcome || '';
+        if (strings.welcomeCode) {
+          const box = document.createElement('p');
+          box.className = 'flytz-welcome__code';
+          box.innerHTML = '<span class="flytz-welcome__code-label"></span><strong data-welcome-code></strong><button type="button" class="flytz-welcome__copy" data-welcome-copy></button>';
+          box.children[0].textContent = strings.yourCode || '';
+          box.children[1].textContent = strings.welcomeCode;
+          const copy = box.children[2];
+          copy.textContent = strings.copy || 'Copy';
+          copy.addEventListener('click', () => {
+            const copied = () => {
+              copy.textContent = strings.copied || 'Copied';
+              setTimeout(() => (copy.textContent = strings.copy || 'Copy'), 1800);
+            };
+            (navigator.clipboard ? navigator.clipboard.writeText(strings.welcomeCode) : Promise.reject()).then(copied, () => {
+              const range = document.createRange();
+              range.selectNodeContents(box.children[1]);
+              const sel = window.getSelection();
+              sel.removeAllRanges();
+              sel.addRange(range);
+            });
+          });
+          done.append(box);
+        }
         try {
           localStorage.setItem('flytz.welcome', JSON.stringify({ subscribedAt: Date.now() }));
         } catch (err) {
