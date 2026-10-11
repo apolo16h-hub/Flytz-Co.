@@ -83,6 +83,7 @@
 
     disconnectedCallback() {
       document.removeEventListener('click', this.onDocClick, true);
+      document.removeEventListener('flytz:open-destination', this.onOpenRequest);
       document.removeEventListener('keydown', this.onKeydown);
       document.documentElement.classList.remove('flytz-locked');
     }
@@ -188,6 +189,15 @@
         this.open(trigger.dataset.flytzOpen, trigger);
       };
       document.addEventListener('click', this.onDocClick, true);
+
+      // Globe pins and other sections ask for a capsule through Flytz.openDestination().
+      this.onOpenRequest = (e) => {
+        const handle = e.detail && e.detail.handle;
+        if (!handle || !this.find(handle)) return;
+        e.preventDefault();
+        this.open(handle, e.detail.trigger);
+      };
+      document.addEventListener('flytz:open-destination', this.onOpenRequest);
 
       this.onKeydown = (e) => {
         if (!this.panel.classList.contains('is-open')) return;

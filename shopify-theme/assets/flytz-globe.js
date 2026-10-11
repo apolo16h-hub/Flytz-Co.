@@ -1,9 +1,12 @@
 /* Flytz hero globe — dotted 3D Earth on canvas with flight arcs, destination pins and an orbiting aircraft.
-   Drag (or swipe sideways) to spin. Land data: Natural Earth 110m, 2° cells, 1 bit per cell. */
+   Drag (or swipe sideways) to spin. Land data: Natural Earth 110m, 2° cells, 1 bit per cell.
+   On WebGL-capable devices it upgrades itself to the real-time scene in flytz-3d.js (clickable
+   pins, modelled aircraft) and crossfades; this 2D globe stays as the fallback. */
 (() => {
   if (customElements.get('flytz-globe')) return;
 
   const LAND_MASK = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf4AP/AAAAAAAAAAAAAAAAAAAAAAAAX/z///+AAAAAAAABAAAAAAAAAAAAAYd8P///wAA+AAAAAA8AAAAAAAAAAAwAnw////4AAIAAAAAAGAAAAAAAAAAADivwAf//wAAAAADAAf/wAHYAAAAAADoi3sAP//gAAAAAMAD///sAAAAgBgACfwz/AD/+gAAAwAEHf///+/8gBAP/7/nJdjwD/+AAAH/AA7f///////f4P//////h8H/gAAAf/6//f////////Mf/////9H4D8AeAA+ev///////////AP/////4A0B4AAAD5/////////////Af3////gHgA4AAAH5///////////LwAHgH///gHkAAAAAH4/////////+CIAABAB///4D+AAAAGCx/////////4A8AAIAAf///n/gAAAOCD/////////wA4AAAAAf///n/wAAAbP///////////AgAAAAAP/////wAAADf//////////9AAAAAAAF////0YAAAB///////////9AAAAAAAD////8EAAAB///////////5AAAAAAAD////2AAAAB/f5fP//////wAAAAAAAD////gAAAAfxnwPP//////jAAAAAAAD////AAAAAPCb3/n/////+CAAAAAAAD///8AAAAAfALf/n////+ECAAAAAAAB///8AAAAAGHQP/n/////mMAAAAAAAA///8AAAAAH+Ai///////E8AAAAAAAAf//wAAAAAP/AA///////BgAAAAAAAAP//gAAAAAf/73///////gAAAAAAAAAD/AQAAAAAf////f/////gAAAAAAAAAF+AQAAAAB///+/n/////AAAAAAAAAAC+AAAAAAB///+f0H////AAAAAAAAAAAeAwAAAAD////f/B///8gAAAAAAAAAAeGEAAAAH////v+B/z/AAAAAAAAAAAAPMAgAAAD////n+A/B+gAAAAAAAAAAAD8AAAAAD////n4AeB/AgAAAAAAAAAAAPAAAAAH////3gAcAfAgAAAAAAAAAAADAAAAAD////6AAcAfggAAAAAAAAAAABDwAAAD////8wAMATAIAAAAAAAAAAAAr/AAAB/////gAKASAAAAAAAAAAAAAAH/gAAA/////gACAAAIAAAAAAAAAAAAH/8AAAaH///AAAAsGAAAAAAAAAAAAAH/+AAAAB//+AAAAUOAAAAAAAAAAAAAP/+AAAAB//8AAAAYegAAAAAAAAAAAAP//gAAAD//4AAAAMeBgAAAAAAAAAAAP//8AAAB//wAAAAGdiuAAAAAAAAAAAf///AAAA//wAAAACAQHgAAAAAAAAAAP///gAAA//wAAAABwAHwgAAAAAAAAAH///AAAA//wAAAAACIDQIAAAAAAAAAH//+AAAAf/wAAAAAAAAAAAAAAAAAAAD//+AAAA//wgAAAAABxAAAAAAAAAAAD//+AAAA//wgAAAAAPxgBAAAAAAAAAA//8AAAA//jgAAAAAf5gAAAAAAAAAAAf/8AAAA//DgAAAAAf/gAAAAAAAAAAAf/8AAAAf/DAAAAAD//4CAAAAAAAAAAf/wAAAAf/DAAAAAH//4AAAAAAAAAAAf/AAAAAf+CAAAAAH//8AAAAAAAAAAAf/AAAAAP8AAAAAAH//+AAAAAAAAAAA/+AAAAAP8AAAAAAH//+AAAAAAAAAAA/+AAAAAH4AAAAAAD//+AAAAAAAAAAA/8AAAAAHwAAAAAADwf8AAAAAAAAAAA/gAAAAAAAAAAAAACAH4AIAAAAAAAAB/wAAAAAAAAAAAAAAAD4AEAAAAAAAAB+AAAAAAAAAAAAAAAAAAAGAAAAAAAAB6AAAAAAAAAAAAAAAAAwAMAAAAAAAAA8AAAAAAAAAAAAAAAAAQAYAAAAAAAAB4AAAAAAAAAAAAAAAAAAAwAAAAAAAAB4AAAAAAAAAAAAAAAAAAAAAAAAAAAADwAAAAAAAAAACAAAAAAAAAAAAAAAAADgAAAAAAAAAAAAAAAAAAAAAAAAAAAABwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAAAAAAAAeAAIP+f/gAAAAAAAAAAAMAAAAAAABP/+H//////AAAAAAAAAAA+AAAAAf////8////////AAAAAAAOEAPAAAB///////////////gAAAP//T//8AAAH//////////////+AAAH/////4AAAH///////////////8AAE//////4ABw////////////////8AAAD//////gCA////////////////wAAAf/////////////////////////+A/4A///////////////////////////////////////////////////////////////////////////////////////';
+  const AVOID = '.flytz-hero__title > span, .flytz-hero__eyebrow, .flytz-hero__sub, .flytz-hero__ctas';
   const COLS = 180;
   const ROWS = 90;
   const DEG = Math.PI / 180;
@@ -78,7 +81,9 @@
       if (!this.canvas) return;
       this.ctx = this.canvas.getContext('2d');
       this.reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      this.autoSpeed = this.reduced ? 0 : (parseFloat(this.dataset.speed) || 4) * 0.000011;
+      const speed = parseFloat(this.dataset.speed);
+      this.speed = Number.isFinite(speed) ? speed : 4;
+      this.autoSpeed = this.reduced ? 0 : this.speed * 0.000011;
       this.showPlane = this.dataset.plane !== 'false';
       this.showRoutes = this.dataset.routes !== 'false';
       this.rot = -12 * DEG;
@@ -118,11 +123,62 @@
       document.fonts?.ready.then(() => this.measureText());
       setTimeout(() => this.measureText(), 1600);
       this.requestDraw();
+      this.upgrade();
+    }
+
+    /* ---------- WebGL upgrade ---------- */
+    upgrade() {
+      if (!window.Flytz?.load3D) return;
+      window.Flytz.load3D()
+        .then((lib) => {
+          if (!this.isConnected || this.globe3d) return;
+          const hero = this.closest('.flytz-hero');
+          const cs = getComputedStyle(this);
+          this.globe3d = lib.createGlobe(this, {
+            pins: this.pins,
+            speed: this.speed,
+            showPlane: this.showPlane,
+            showRoutes: this.showRoutes,
+            dragArea: this.dragTarget,
+            labelsParent: hero || this,
+            avoid: () => [...(hero || this).querySelectorAll(`${AVOID}, .flytz-ticker`)],
+            accent: cs.getPropertyValue('--flytz-gold').trim(),
+            accentSoft: cs.getPropertyValue('--flytz-gold-soft').trim(),
+            openLabel: this.dataset.openLabel,
+            onPinClick: (pin, e) => window.Flytz.openDestination(pin.handle, pin.url, e?.currentTarget instanceof HTMLElement ? e.currentTarget : null),
+            onContextLost: () => this.downgrade(),
+          });
+          this.globe3d.ready.then(() => {
+            if (!this.globe3d) return;
+            this.classList.add('is-3d');
+            // The 2D globe stops drawing once the crossfade has finished.
+            this.fadeTimer = setTimeout(() => {
+              this.paused = true;
+              cancelAnimationFrame(this.raf);
+              this.raf = null;
+            }, 1300);
+          });
+        })
+        .catch((err) => {
+          if (window.Flytz3D) console.error('Flytz globe:', err);
+        });
+    }
+
+    downgrade() {
+      clearTimeout(this.fadeTimer);
+      this.globe3d?.dispose();
+      this.globe3d = null;
+      this.classList.remove('is-3d');
+      this.paused = false;
+      this.requestDraw();
     }
 
     disconnectedCallback() {
       cancelAnimationFrame(this.raf);
       this.raf = null;
+      clearTimeout(this.fadeTimer);
+      this.globe3d?.dispose();
+      this.globe3d = null;
       this.ro?.disconnect();
       this.io?.disconnect();
       this.dragTarget?.removeEventListener('pointerdown', this.onDown);
@@ -146,7 +202,9 @@
         try {
           const cfg = JSON.parse(el.textContent);
           (cfg.destinations || []).forEach((d) => {
-            if (typeof d.lat === 'number' && typeof d.lng === 'number') pins.push({ code: d.code || '', lat: d.lat, lng: d.lng });
+            if (typeof d.lat === 'number' && typeof d.lng === 'number') {
+              pins.push({ code: d.code || '', title: d.title || '', handle: d.handle || '', url: d.url || '', lat: d.lat, lng: d.lng });
+            }
           });
         } catch (e) {
           /* ignore malformed config */
@@ -178,7 +236,7 @@
       const hero = this.closest('.flytz-hero');
       const base = this.getBoundingClientRect();
       this.avoid = [];
-      hero?.querySelectorAll('.flytz-hero__title > span, .flytz-hero__eyebrow, .flytz-hero__sub, .flytz-hero__ctas').forEach((el) => {
+      hero?.querySelectorAll(AVOID).forEach((el) => {
         const r = el.getBoundingClientRect();
         if (r.width) this.avoid.push([r.left - base.left - 8, r.top - base.top - 8, r.right - base.left + 8, r.bottom - base.top + 8]);
       });
@@ -234,7 +292,7 @@
     }
 
     requestDraw() {
-      if (!this.raf) this.raf = requestAnimationFrame(this.frame);
+      if (!this.raf && !this.paused) this.raf = requestAnimationFrame(this.frame);
     }
 
     frame(t) {

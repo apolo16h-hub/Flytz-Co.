@@ -1,0 +1,12 @@
+{
+  "name": "flytz-3d",
+  "private": true,
+  "description": "Builds shopify-theme/assets/flytz-3d.js: the Flytz WebGL scenes (globe, landmarks, boarding) on a tree-shaken three.js.",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "esbuild": "0.28.2",
+    "three": "0.186.1"
+  }
+}

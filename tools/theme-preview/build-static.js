@@ -264,6 +264,8 @@ ${styleBlock}
 <script src="/assets/catalog.js"></script>
 ${capsules ? '<script src="/assets/capsules.js"></script>' : ''}
 <script src="/assets/preview-shim.js"></script>
+<script>window.flytzConfig={threeD:true,threeSrc:'/assets/flytz-3d.js'};</script>
+<script src="/assets/flytz-motion.js" defer></script>
 <script src="/assets/animations.js" defer></script>`;
 }
 const header = () => `
@@ -361,7 +363,7 @@ async function main() {
   }
   write(
     'index.html',
-    rewrite(`<title>Flytz Co. Storefront</title>${headTags({ capsules: true })}${header()}<main id="MainContent">${body}</main>${footer()}${await tail()}`)
+    rewrite(`<meta charset="utf-8"><title>Flytz Co. Storefront</title>${headTags({ capsules: true })}${header()}<main id="MainContent">${body}</main>${footer()}${await tail()}`)
   );
 
   // Capsule fragments for the explorer
@@ -499,7 +501,7 @@ ${docClose}`;
   write('confirmation.html', rewrite(confirmation));
 
   // Static assets
-  for (const a of ['base.css', 'flytz.css', 'flytz-hero.css', 'flytz-explorer.css', 'flytz-globe.js', 'flytz-explorer.js', 'flytz-boarding.js', 'animations.js']) {
+  for (const a of ['base.css', 'flytz.css', 'flytz-hero.css', 'flytz-explorer.css', 'flytz-globe.js', 'flytz-explorer.js', 'flytz-boarding.js', 'flytz-motion.js', 'flytz-3d.js', 'animations.js']) {
     fs.copyFileSync(path.join(THEME, 'assets', a), path.join(OUT, 'assets', a));
     files.push(`assets/${a}`);
   }

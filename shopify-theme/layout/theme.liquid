@@ -58,6 +58,13 @@
     <script src="{{ 'details-modal.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'search-form.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'standard-actions-override.js' | asset_url }}" defer="defer"></script>
+    <script>
+      window.flytzConfig = {
+        threeD: {{ settings.flytz_enable_3d | json }},
+        threeSrc: {{ 'flytz-3d.js' | asset_url | json }}
+      };
+    </script>
+    <script src="{{ 'flytz-motion.js' | asset_url }}" defer="defer"></script>
 
     {%- if settings.animations_reveal_on_scroll -%}
       <script src="{{ 'animations.js' | asset_url }}" defer="defer"></script>

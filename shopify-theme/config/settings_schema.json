@@ -137,6 +137,17 @@
         "id": "flytz_boarding_gate",
         "label": "Gate shown during boarding",
         "default": "G7"
+      },
+      {
+        "type": "header",
+        "content": "3D and motion"
+      },
+      {
+        "type": "checkbox",
+        "id": "flytz_enable_3d",
+        "label": "Use real-time 3D scenes",
+        "default": true,
+        "info": "WebGL globe, landmark models and boarding scene on devices that support them. Shoppers with data saver on, or on low-memory devices, see the lighter 2D versions."
       }
     ]
   },

@@ -194,7 +194,8 @@
       "flytz_accent": "#C9A24B",
       "flytz_accent_soft": "#E7CF96",
       "flytz_boarding_enable": true,
-      "flytz_boarding_gate": "G7"
+      "flytz_boarding_gate": "G7",
+      "flytz_enable_3d": true
     }
   }
 }

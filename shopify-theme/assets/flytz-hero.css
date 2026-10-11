@@ -18,6 +18,81 @@
   width: 100%;
   height: 100%;
 }
+/* WebGL globe (flytz-3d.js): fades in over the 2D globe once its first frame is drawn. */
+.flytz-hero__globe > canvas {
+  transition: opacity 1.2s var(--flytz-ease);
+}
+.flytz-hero__globe .flytz-globe3d {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+.flytz-hero__globe.is-3d .flytz-globe3d {
+  opacity: 1;
+}
+.flytz-hero__globe.is-3d > canvas:not(.flytz-globe3d) {
+  opacity: 0;
+}
+.flytz-globe3d__labels {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.flytz-globe3d__pin {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 2.2rem;
+  margin: 0;
+  padding: 0 0.9rem;
+  border: 1px solid rgba(var(--flytz-gold-rgb), 0.4);
+  border-radius: 10rem;
+  background: rgba(var(--color-background), 0.6);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: rgb(var(--color-foreground));
+  font-family: var(--font-body-family);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.24em;
+  white-space: nowrap;
+  cursor: pointer;
+  pointer-events: auto;
+  will-change: transform;
+  transition: opacity 0.3s, border-color 0.2s, background-color 0.2s;
+}
+span.flytz-globe3d__pin {
+  cursor: default;
+  pointer-events: none;
+}
+.flytz-globe3d__pin[hidden] {
+  display: none;
+}
+.flytz-globe3d__name {
+  max-width: 0;
+  overflow: hidden;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  transition: max-width 0.35s var(--flytz-ease);
+}
+.flytz-globe3d__pin:is(:hover, :focus-visible) {
+  z-index: 1;
+  border-color: var(--flytz-gold);
+  background: rgba(var(--color-background), 0.88);
+}
+.flytz-globe3d__pin:is(:hover, :focus-visible) .flytz-globe3d__name {
+  max-width: 16em;
+}
+.flytz-globe3d__pin:focus-visible {
+  outline: 0.2rem solid var(--flytz-gold);
+  outline-offset: 0.2rem;
+}
+
 .flytz-hero__vignette {
   position: absolute;
   inset: 0;

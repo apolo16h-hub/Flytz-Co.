@@ -598,6 +598,9 @@
       "message_boarding": "Now boarding at gate {{ gate }}",
       "message_takeoff": "Cleared for take-off",
       "skip": "Skip to checkout"
+    },
+    "hero": {
+      "open_capsule": "Open the capsule"
     }
   }
 }
