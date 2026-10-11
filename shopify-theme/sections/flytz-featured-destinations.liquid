@@ -45,7 +45,10 @@
                 {% endif %}
                 style="--dest-tint: {{ c[3] }};"
               >
-                <div class="flytz-dest-card__art">{%- render 'flytz-monument', monument: c[2] -%}</div>
+                <div class="flytz-dest-card__art">
+                  {%- render 'flytz-monument', monument: c[2] -%}
+                  <flytz-landmark monument="{{ c[2] }}" data-mode="card" aria-hidden="true"></flytz-landmark>
+                </div>
                 <span class="flytz-dest-card__code">{{ c[1] }}</span>
                 <h3 class="flytz-dest-card__title">{{ c[0] }}</h3>
                 <p class="flytz-dest-card__text">{{ c[4] }}</p>
@@ -82,7 +85,10 @@
                     -}}
                   </div>
                 {%- else -%}
-                  <div class="flytz-dest-card__art">{%- render 'flytz-monument', monument: m[2] -%}</div>
+                  <div class="flytz-dest-card__art">
+                    {%- render 'flytz-monument', monument: m[2] -%}
+                    <flytz-landmark monument="{{ m[2] }}" data-mode="card" aria-hidden="true"></flytz-landmark>
+                  </div>
                 {%- endif -%}
                 {%- if m[1] != blank -%}
                   <span class="flytz-dest-card__code">{{ m[1] }}</span>
@@ -136,7 +142,7 @@
       "id": "card_style",
       "label": "Card artwork",
       "options": [
-        { "value": "monument", "label": "Landmark line art" },
+        { "value": "monument", "label": "3D landmark" },
         { "value": "image", "label": "Collection image" }
       ],
       "default": "monument",

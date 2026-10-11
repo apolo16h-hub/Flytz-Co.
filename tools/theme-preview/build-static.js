@@ -363,7 +363,7 @@ async function main() {
   }
   write(
     'index.html',
-    rewrite(`<meta charset="utf-8"><title>Flytz Co. Storefront</title>${headTags({ capsules: true })}${header()}<main id="MainContent">${body}</main>${footer()}${await tail()}`)
+    rewrite(`<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Flytz Co. Storefront</title>${headTags({ capsules: true })}${header()}<main id="MainContent">${body}</main>${footer()}${await tail()}`)
   );
 
   // Capsule fragments for the explorer

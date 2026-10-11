@@ -259,6 +259,7 @@
 
       const tpl = this.querySelector(`template[data-monument="${CSS.escape(d.monument || 'globe')}"]`) || this.querySelector('template[data-monument="globe"]');
       this.tiltEl.replaceChildren(tpl ? tpl.content.cloneNode(true) : '');
+      this.stage.querySelector('flytz-landmark')?.setAttribute('monument', d.monument || 'globe');
       this.stage.classList.remove('is-drawing');
       void this.stage.offsetWidth;
       this.stage.classList.add('is-drawing');

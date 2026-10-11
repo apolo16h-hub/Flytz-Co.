@@ -44,6 +44,7 @@
         >
           <div class="flytz-stage is-drawing" aria-hidden="true">
             <div class="flytz-stage__tilt">{%- render 'flytz-monument', monument: m[2] -%}</div>
+            <flytz-landmark monument="{{ m[2] }}" data-mode="stage" aria-hidden="true"></flytz-landmark>
           </div>
           <div class="flytz-pdest__body">
             <p class="flytz-eyebrow">{{ section.settings.eyebrow | escape }}</p>
